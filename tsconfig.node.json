@@ -9,11 +9,23 @@
     "eslint.config.*"
   ],
   "compilerOptions": {
+    "target": "es2020",
     "noEmit": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
 
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "types": ["node"]
+    "types": ["node", "vite/client"],
+
+    "plugins": [
+      {
+        "name": "volar"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
   }
 }
