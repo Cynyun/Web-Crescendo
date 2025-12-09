@@ -1,0 +1,23 @@
+{
+  "id": "5078509",
+  "name": "web",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "6850458",
+      "name": "左",
+      "font_class": "left",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "46237168",
+      "name": "右",
+      "font_class": "right-copy",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    }
+  ]
+}
