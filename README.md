@@ -64,12 +64,21 @@ Web-Crescendo is a personal web journal for documenting gaming achievements, ref
   ```
 
 - 参与协作
+  
+  开始工作，先同步最新代码：
+  ```bash
+  git checkout main # 切换到 main 分支
+  git pull origin main # 从远程仓库拉取最新的 main 分支代码
+  git checkout -b feature/new-ui # 3. 创建一个新的功能分支（feature/new-ui），用于开发新功能 -b 表示创建并切换到该分支
+  ```
+
   修改代码后，请通过 Git 提交并推送：
   ```bash
   git add . # 添加所有修改到暂存区
   git commit -m "feat: 添加新功能" # 提交更改，并附上描述性提交信息
   git push origin your-branch-name # 将分支推送到远程仓库（如 main 或 feature/xxx）
   ```
+
   推荐使用 VS Code + Volar 插件 获得最佳开发体验。
   请遵循项目中的 TypeScript 类型规范与代码风格。
 
