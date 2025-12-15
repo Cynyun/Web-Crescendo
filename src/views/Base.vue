@@ -160,7 +160,7 @@ const texts = ref([
             height: 150px;
             position: absolute;
             top: 10px;
-            left: 100px;
+            left: 50px;
         }
     }
 }
