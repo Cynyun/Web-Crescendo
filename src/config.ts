@@ -1,0 +1,54 @@
+// 颜色
+export const COLORS = {
+  background: {
+    color1: '#52ffbdff',
+  },
+  scrollbar: {
+    track: 'rgba(240, 239, 160, 1)',
+    thumb: 'rgba(70, 183, 244, 1)'
+  },
+  green: {
+    light: '#e7ffe5ff', // 浅色
+    lightGrey: '#b3c6b0ff', // 浅灰
+    default: '#8aff80ff', // 普通
+    defaultGrey: '#7adc71ff', // 普灰
+    dark: '#00ff00', // 亮色
+    darkGrey: '#00b000ff', // 深灰
+  },
+  cyan: {
+    light: '#daffffff', // 浅色
+    lightGrey: '#aecacaff', // 浅灰
+    default: '#7dffffff', // 普通
+    defaultGrey: '#63c8c8ff', // 普灰
+    dark: '#00FFFF', // 亮色
+    darkGrey: '#00b8b8ff', // 深灰
+  }
+}
+
+// 导出函数
+export function registerColorCssVariables(colors: typeof COLORS) {
+  const setVar = (obj: any, path = '') => {
+    for (const key in obj) {
+      const value = obj[key];
+      const newPath = path ? `${path}-${key}` : key;
+      if (typeof value === 'string' && value.startsWith('#')) {
+        document.documentElement.style.setProperty(`--color-${newPath}`, value);
+      } else if (typeof value === 'object') {
+        setVar(value, newPath);
+      }
+    }
+  };
+  setVar(colors);
+}
+
+// 图片函数
+
+export const getImageSrc = (path: string): string => {
+  return `/Images/${path}`;
+};
+
+export default {
+  install(app: any) {
+    app.config.globalProperties.$getImageSrc = getImageSrc;
+  }
+};

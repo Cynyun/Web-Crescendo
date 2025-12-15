@@ -5,10 +5,7 @@
 </template>
 
 <script setup lang="ts">
-const getImageSrc = (path: string) => {
-    return `/Images/${path}`
-}
-
+    import { getImageSrc } from '@/config';
 const imageList = [
     { src: getImageSrc('guimie_image01.png'), link: 'https://example.com/link1' },
     { src: getImageSrc('guimie_image02.png'), link: 'https://example.com/link1' },
