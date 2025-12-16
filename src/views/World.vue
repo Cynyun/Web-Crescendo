@@ -24,7 +24,7 @@
         </div>
         <div class="container">
             <div class="book">
-                <img :src="getImageSrc('bookjkz.webp')" class="bookimg">
+                <img :src="currentbook" class="bookimg">
             </div>
             <div class="texts">
                 <img :src="getImageSrc('textheader.webp')">
@@ -46,12 +46,13 @@ const currenttype = ref(0)
 const currentypeindex = ref(0)
 const currenttexts = ref({})
 const currenttitle = ref('')
+const currentbook = ref('')
 
 // 改变展示内容
 const changetext = () => {
     const item = datas.value[currenttype.value]
     currenttitle.value = item!.title
-
+    currentbook.value = item!.book
     if (item?.type == 1) {
         const texts = item.more![currentypeindex.value]?.texts!
         // 转换为对象数组
