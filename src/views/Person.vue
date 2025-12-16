@@ -1,24 +1,72 @@
 <template>
-  <div class="image-switch-container">
-    <h1 class="title">英雄故事图片展示</h1>
-
-    <!-- 按钮组 -->
-    <div class="btn-group">
-      <button v-for="(btn, index) in buttonList" :key="index" class="hero-btn"
-        :class="{ active: activeIndex === index }" @click="switchImage(index)">
-        {{ btn.name }}
-      </button>
+  <div class="page-container">
+    <!-- 顶部导航栏 -->
+    <div class="header">
+      <div class="nav-tabs">
+        <div class="backarrow">
+          <button 
+            class="backbtn" 
+            :style="{ backgroundImage: `url(${getImageSrc('backbtn.png')})` }" 
+            @click="clickBack"
+          >
+            <img :src="getImageSrc('barrow.png')" alt="返回" class="back-icon">
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- 图片展示区域 -->
-    <div class="image-wrapper">
-      <img :src="imageList[activeIndex].url" :alt="buttonList[activeIndex].name" class="hero-image" loading="lazy">
+    <!-- 分割布局容器 -->
+    <div class="split-container">
+      <!-- 左侧：动态背景图区域 -->
+      <div class="left-panel" :style="{ backgroundImage: `url(${leftImageList[activeIndex].url})` }">
+        <!-- 装饰性遮罩层 -->
+        <div class="left-mask"></div>
+        <!-- 英雄名称标题（行楷字体） -->
+        <h1 class="title">{{ buttonList[activeIndex].name }}</h1>
+        <!-- 装饰性边框 -->
+        <div class="decor-border top-left"></div>
+        <div class="decor-border bottom-right"></div>
+      </div>
+
+      <!-- 右侧：原图展示 + 按钮组 -->
+      <div class="right-panel">
+        <!-- 按钮组（按钮文字行楷） -->
+        <div class="btn-group">
+          <button 
+            v-for="(btn, index) in buttonList" 
+            :key="index" 
+            class="hero-btn"
+            :class="{ active: activeIndex === index }" 
+            @click="switchImage(index)"
+          >
+            {{ btn.name }}
+          </button>
+        </div>
+
+        <!-- 原图展示区域（带装饰卡片） -->
+        <div class="image-card">
+          <div class="image-wrapper">
+            <img 
+              :src="rightImageList[activeIndex].url" 
+              :alt="buttonList[activeIndex].name" 
+              class="hero-image" 
+              loading="lazy"
+            >
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { getImageSrc } from '@/config';
+import router from '@/router';
 import { ref } from 'vue';
+
+const clickBack = () => {
+  router.back()
+}
 
 // 按钮名称列表（对应图片）
 const buttonList = ref([
@@ -32,107 +80,342 @@ const buttonList = ref([
   { name: '胡为' }
 ]);
 
-// 图片链接列表（你提供的所有图片URL）
-const imageList = ref([
-  {
-    url: 'https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/13fa6751d9ca46f399d6df755929bf64.png~tplv-a9rns2rl98-image.png?rcl=20251215183847142DACEEC3B3C09C71B8&rk3s=8e244e95&rrcfp=dafada99&x-expires=2082019127&x-signature=ZgDVOSxV9WolKgBO09dtcj1sQJM%3D'
-  },
-  {
-    url: 'https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/ab63bc1af53c45f495513ff05bef0fd3.png~tplv-a9rns2rl98-image.png?rcl=20251215183847142DACEEC3B3C09C71B8&rk3s=8e244e95&rrcfp=dafada99&x-expires=2082019127&x-signature=cuLq3HK1O5i%2BwK7VF7MBrJxxuWk%3D'
-  },
-  {
-    url: 'https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/d32b8f792f82491eac47bd1383fd9aeb.png~tplv-a9rns2rl98-image.png?rcl=20251215183847142DACEEC3B3C09C71B8&rk3s=8e244e95&rrcfp=dafada99&x-expires=2082019127&x-signature=4Yc2%2BMxodPZHoZAfcQGJiJ16Q%2FM%3D'
-  },
-  {
-    url: 'https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/6364ee3f1eaf4f0792985ac0934e93c0.png~tplv-a9rns2rl98-image.png?rcl=20251215183847142DACEEC3B3C09C71B8&rk3s=8e244e95&rrcfp=dafada99&x-expires=2082019127&x-signature=XwikFhgo9DuCYifc47jtFnEVVGY%3D'
-  },
-  {
-    url: 'https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/c8e1707ec8744f70899437398526c640.png~tplv-a9rns2rl98-image.png?rcl=20251215183847142DACEEC3B3C09C71B8&rk3s=8e244e95&rrcfp=dafada99&x-expires=2082019127&x-signature=DT9TzR6abw4RJ8lxO9VMJlh5rrw%3D'
-  },
-  {
-    url: 'https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/46c7c53b905e4a69bd30dfa460810dd7.png~tplv-a9rns2rl98-image.png?rcl=20251215183847142DACEEC3B3C09C71B8&rk3s=8e244e95&rrcfp=dafada99&x-expires=2082019127&x-signature=7UNEE%2BNYbDaqms2FtvGB9oPC0ok%3D'
-  },
-  {
-    url: 'https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/1f0efd1858a040cd958453f9c321847f.png~tplv-a9rns2rl98-image.png?rcl=20251215183847142DACEEC3B3C09C71B8&rk3s=8e244e95&rrcfp=dafada99&x-expires=2082019127&x-signature=SmaaxtOaglshzy3qs9Phj9vouuI%3D'
-  },
-  {
-    url: 'https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/dc3c848c3a724759985369f84801dbac.png~tplv-a9rns2rl98-image.png?rcl=20251215183847142DACEEC3B3C09C71B8&rk3s=8e244e95&rrcfp=dafada99&x-expires=2082019127&x-signature=GOwl6oPMK6uV0E4g5stVooKz%2FKg%3D'
-  }
+// 左侧背景图列表（public/Images下的图片，路径以/Images/开头）
+const leftImageList = ref([
+  { url: '/Images/wc1.jpg' },    
+  { url: '/Images/ys1.jpg' },    
+  { url: '/Images/jch1.jpg' },  
+  { url: '/Images/th1.jpg' },    
+  { url: '/Images/nhy1.jpg' },  
+  { url: '/Images/liul1.jpg' },    
+  { url: '/Images/hd1.jpg' },    
+  { url: '/Images/hw1.jpg' },    
+]);
+
+// 右侧展示图列表（public/Images下的图片，路径以/Images/开头）
+const rightImageList = ref([
+  { url: '/Images/wc.png' },   
+  { url: '/Images/ys.png' },   
+  { url: '/Images/jch.png' }, 
+  { url: '/Images/th.png' },   
+  { url: '/Images/nhy.png' }, 
+  { url: '/Images/liul.png' },   
+  { url: '/Images/hd.png' },   
+  { url: '/Images/hw.png' },   
 ]);
 
 // 当前激活的图片索引
 const activeIndex = ref(0);
 
-// 切换图片方法
+// 切换图片方法（同步切换左右图）
 const switchImage = (index) => {
   activeIndex.value = index;
 };
 </script>
 
 <style scoped>
-/* 全局容器样式 */
-.image-switch-container {
-
+/* 全局页面容器 */
+.page-container {
   width: 100%;
-  /* height: 100%; */
-  min-width: 1200px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  background-color: #1a1a1a;
   min-height: 100vh;
-  box-sizing: border-box;
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+  overflow-x: hidden;
 }
 
-/* 标题样式 */
+/* 顶部导航栏 */
+.header {
+  width: 100%;
+  height: 80px;
+  position: relative;
+  background: 
+    url('/Images/logo.png') no-repeat 40px 15px / contain,
+    url('/Images/header_bg.jpg') no-repeat center center / cover,
+    linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 100%);
+  background-blend-mode: overlay;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    pointer-events: none;
+  }
+
+  .nav-tabs {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 22px;
+    padding: 0 50px;
+    height: 100%;
+
+    .backarrow {
+      margin-right: auto;
+    }
+  }
+
+  .backarrow {
+    width: 120px;
+    height: 60px;
+    position: relative;
+    top: 18px;
+    left: 220px;
+
+    .backbtn {
+      width: 100%;
+      height: 100%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+
+      .back-icon {
+        position: relative;
+        top: 3px;
+        left: -23px;
+        transition: all 0.3s ease;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+      }
+    }
+
+    .backbtn:hover .back-icon {
+      left: -35px;
+      filter: drop-shadow(0 2px 6px rgba(0, 153, 255, 0.5));
+    }
+  }
+}
+
+/* 分割布局容器：左右各占50% */
+.split-container {
+  display: flex;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  gap: 1px;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* 左侧面板：动态背景图 + 标题 */
+.left-panel {
+  flex: 1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s ease;
+
+  /* 渐变遮罩，提升层次感 */
+  .left-mask {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      45deg, 
+      rgba(0, 0, 0, 0.7) 0%, 
+      rgba(0, 0, 0, 0.4) 50%, 
+      rgba(0, 0, 0, 0.7) 100%
+    );
+    z-index: 1;
+  }
+
+  /* 装饰性边框 */
+  .decor-border {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    z-index: 2;
+  }
+
+  .top-left {
+    top: 40px;
+    left: 40px;
+    border-right: none;
+    border-bottom: none;
+  }
+
+  .bottom-right {
+    bottom: 40px;
+    right: 40px;
+    border-left: none;
+    border-top: none;
+  }
+}
+
+/* 标题样式（行楷字体） */
 .title {
   color: #ffffff;
-  text-align: center;
-  margin-bottom: 40px;
-  font-size: 28px;
-  font-weight: 600;
-  letter-spacing: 1px;
+  font-size: 48px;
+  /* 行楷字体优先级：华文行楷 > 微软行楷 > 楷体 > 通用衬线字体 */
+  font-family: "STXingkai", "Microsoft YaHei UI", "KaiTi", "SimKai", serif;
+  font-weight: 500;
+  letter-spacing: 4px; /* 增加字间距更符合行楷风格 */
+  z-index: 3;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(90deg, #ffffff, #e0e0e0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #0099ff, transparent);
+    border-radius: 3px;
+  }
+}
+
+/* 右侧面板：按钮组 + 切换的原图 */
+.right-panel {
+  flex: 1;
+  padding: 60px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, #121212 0%, #0f0f0f 100%);
 }
 
 /* 按钮组样式 */
 .btn-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 15px;
   justify-content: center;
-  margin-bottom: 30px;
+  width: 100%;
+  max-width: 700px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
 }
 
-/* 按钮样式 */
+/* 按钮样式（行楷字体） */
 .hero-btn {
-  padding: 12px 24px;
-  background-color: #2d2d2d;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #2d2d2d 0%, #232323 100%);
   color: #ffffff;
-  border: 1px solid #444;
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
   cursor: pointer;
-  font-size: 16px;
-  transition: all 0.3s ease;
+  font-size: 18px; /* 放大按钮字体更适配行楷 */
+  /* 行楷字体优先级：华文行楷 > 微软行楷 > 楷体 > 通用衬线字体 */
+  font-family: "STXingkai", "Microsoft YaHei UI", "KaiTi", "SimKai", serif;
+  font-weight: 500;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 2px; /* 行楷增加字间距更美观 */
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.6s ease;
+  }
+
+  &:hover {
+    background: linear-gradient(135deg, #383838 0%, #2d2d2d 100%);
+    border-color: rgba(0, 153, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+
+    &::before {
+      left: 100%;
+    }
+  }
+
+  &.active {
+    background: linear-gradient(135deg, #007acc 0%, #005fa3 100%);
+    border-color: #0099ff;
+    box-shadow: 0 0 20px rgba(0, 153, 255, 0.3);
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+      padding: 1px;
+      background: linear-gradient(90deg, #0099ff, #00ccff);
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+  }
 }
 
-.hero-btn:hover {
-  background-color: #3f3f3f;
-  border-color: #666;
-}
+/* 图片卡片容器 */
+.image-card {
+  max-width: 650px;
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  position: relative;
+  background: #000;
+  transition: transform 0.5s ease;
 
-.hero-btn.active {
-  background-color: #007acc;
-  border-color: #0099ff;
-  color: #fff;
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+      0 15px 40px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(0, 153, 255, 0.1);
+  }
+
+  /* 图片卡片装饰角标 */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, rgba(0, 153, 255, 0.1), transparent);
+    border-radius: 50%;
+    z-index: 1;
+    pointer-events: none;
+  }
 }
 
 /* 图片容器样式 */
 .image-wrapper {
-  max-width: 800px;
-  margin: 0 auto;
-  border: 2px solid #333;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
 /* 图片样式 */
@@ -140,23 +423,93 @@ const switchImage = (index) => {
   width: 100%;
   height: auto;
   display: block;
-  transition: opacity 0.5s ease;
+  transition: all 0.6s ease;
+  transform-origin: center;
+
+  &:hover {
+    transform: scale(1.02);
+  }
 }
 
-/* 响应式适配 */
-@media (max-width: 768px) {
-  .btn-group {
-    gap: 8px;
-  }
-
-  .hero-btn {
-    padding: 10px 18px;
-    font-size: 14px;
-  }
-
+/* 响应式适配：小屏幕改为上下布局 */
+@media (max-width: 1200px) {
   .title {
-    font-size: 24px;
+    font-size: 36px;
+    letter-spacing: 3px;
+  }
+  .hero-btn {
+    font-size: 16px;
+    letter-spacing: 1.5px;
   }
 }
 
+@media (max-width: 768px) {
+  .split-container {
+    flex-direction: column;
+  }
+  
+  .left-panel {
+    min-height: 400px;
+  }
+  
+  .title {
+    font-size: 32px;
+    letter-spacing: 2px;
+  }
+  
+  .right-panel {
+    padding: 40px 20px;
+    gap: 30px;
+  }
+  
+  .btn-group {
+    gap: 10px;
+    padding: 15px;
+  }
+  
+  .hero-btn {
+    padding: 12px 20px;
+    font-size: 15px;
+    letter-spacing: 1px;
+  }
+  
+  .header .backarrow {
+    left: 40px;
+  }
+  
+  .decor-border {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .left-panel {
+    min-height: 300px;
+  }
+  
+  .title {
+    font-size: 28px;
+    letter-spacing: 2px;
+  }
+  
+  .hero-btn {
+    padding: 10px 16px;
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+  
+  .image-card {
+    border-radius: 12px;
+  }
+  
+  .header {
+    height: 70px;
+  }
+  
+  .header .backarrow {
+    width: 100px;
+    height: 50px;
+  }
+}
 </style>
