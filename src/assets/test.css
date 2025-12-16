@@ -1,0 +1,34 @@
+:root {
+  /* scrollbar */
+  --color-scrollbar-track: rgb(195, 194, 163);
+  --color-scrollbar-thumb: rgb(37, 116, 213);
+  --color-scrollbar-hover: rgb(255, 107, 107);
+  /* background */
+  --color-background-color1: #52ffbdff;
+  /* colors */
+  /* 浅色 */
+  --color-green-light: #e7ffe5ff;
+  /* 浅灰 */
+  --color-green-lightGrey: #b3c6b0ff;
+  /* 普通 */
+  --color-green-default: #8aff80ff;
+  /* 普灰 */
+  --color-green-defaultGrey: #7adc71ff;
+  /* 亮色 */
+  --color-green-dark: #00ff00ff;
+  /* 深灰 */
+  --color-green-darkGrey: #e7ffe5ff;
+
+  /* 浅色 */
+  --color-cyan-light: #daffffff;
+  /* 浅灰 */
+  --color-cyan-lightGrey: #aecacaff;
+  /* 普通 */
+  --color-cyan-default: #7dffffff;
+  /* 普灰 */
+  --color-cyan-dark: #00FFFFff;
+  /* 亮色 */
+  --color-cyan-darkGrey: #00b8b8ff;
+  /* 深灰 */
+  --color-cyan-defaultGrey: #63c8c8ff;
+}

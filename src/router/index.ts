@@ -9,9 +9,14 @@ const router = createRouter({
       component: () => import('../views/Base.vue'),
     },
     {
-      path: '/img',
-      name: 'Test',
-      component: () => import('../views/ShowImage.vue'),
+      path: '/framework',
+      name: 'FrameWork',
+      component: () => import('../views/FrameWork.vue'),
+    },
+    {
+      path: '/world',
+      name: 'World',
+      component: () => import('../views/World.vue'),
     },
   ],
 })

@@ -13,6 +13,7 @@ body {
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
+  transition: width 1s ease, height 1s ease;
 }
 
 ::-webkit-scrollbar-track {
@@ -26,16 +27,16 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(255, 120, 120);
+  background: var(--color-scrollbar-hover);
 }
 
+/* 宽度和高度滚动条都出现时出现 */
 ::-webkit-scrollbar-corner {
-  background: rgb(255, 120, 120);
+  background: var(--color-scrollbar-track);
 }
 
 
-:root {
-  /* scrollbar */
-  --color-scrollbar-track: rgb(195, 194, 163);
-  --color-scrollbar-thumb: rgb(37, 116, 213);
+html.hide-scrollbar ::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
 }

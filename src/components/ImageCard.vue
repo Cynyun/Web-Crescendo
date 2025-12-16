@@ -38,6 +38,8 @@
 </template>
 
 <script setup lang="ts">
+import router from '@/router';
+
 interface Props {
     prompt?: string
     title?: string
@@ -71,9 +73,9 @@ const props = withDefaults(defineProps<Props>(), {
     justify-content: center;
     align-items: center;
     border-radius: 20px;
+    border: 2px solid white;
     transition: 700ms;
     background: linear-gradient(43deg, var(--color-green-defaultGrey) 0%, var(--color-cyan-defaultGrey) 100%);
-
     overflow: hidden; // 裁剪子组件超出的部分
 
     // 添加的图片
