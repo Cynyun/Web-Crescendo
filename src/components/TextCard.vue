@@ -10,6 +10,7 @@ interface ContextItem {
     text?: string
     indent?: boolean // 空格
     wideGap?: boolean // 更大的间距
+    showbackground?: boolean // 展示背景
 }
 interface Props {
     contexts?: ContextItem[],
@@ -48,6 +49,9 @@ const props = withDefaults(defineProps<Props>(), {
     margin-bottom: 10px; // 确保下方留有足够空间放置阴影
     opacity: 0.6;
     align-items: flex-start;
+    overflow: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 
     .paragraph {
         line-height: 22px;
@@ -99,7 +103,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 .context:hover {
     box-shadow: 3px 6px 6px rgba(0, 0, 255, 0.15);
-    background-color: rgba(255, 255, 255, 0.40);
+    background-color: rgba(255, 255, 255, 0.6);
     opacity: 1;
     transition: opacity 0.5s ease;
 }
