@@ -9,11 +9,11 @@
             :effect="'creative'" :creative-effect="creativeEffectOptions" :speed="500" :autoplay="{
                 delay: 3000,
                 disableOnInteraction: false
-            }" @init="onSwiperInit" @slide-change="onSlideChange" class="my-swiper" @click="handleContainerClick">
+            }" @init="onSwiperInit" @slide-change="onSlideChange" class="my-swiper" @v-click="handleContainerClick">
             <SwiperSlide v-for="(image, index) in images" :key="index">
-                <a :href="image.link" target="_blank" rel="noopener noreferrer">
-                    <img :src="image.src" alt="" class="slide-img" />
-                </a>
+                <!-- <a :href="image.link" target="_blank" rel="noopener noreferrer"> -->
+                <img :src="image.src" alt="" class="slide-img" />
+                <!-- </a> -->
             </SwiperSlide>
         </Swiper>
 
@@ -39,6 +39,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import type { PropType } from 'vue'
 // 导入 Swiper Vue 组件
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
@@ -49,7 +50,13 @@ import { Navigation, Pagination, Autoplay, EffectCreative } from 'swiper/modules
 
 // Props 接口定义
 const props = defineProps({
-    images: { type: Array, required: true },
+    images: {
+        type: Array as PropType<Array<{
+            src: string
+            alt?: string
+            title?: string
+        }>>, required: true
+    },
     maxVisibleBullets: { type: Number, default: 5 },
     showPagination: { type: Boolean, default: true },
     paginationType: {

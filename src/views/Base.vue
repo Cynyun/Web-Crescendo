@@ -207,7 +207,4 @@ const handleLogout = () => {
     }
 }
 
-.footer {
-    // height: 10px;
-}
-</style>
+// .footer {}</style>

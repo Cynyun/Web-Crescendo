@@ -9,10 +9,8 @@
     <div class="container">
       <div class="carousel-container">
         <!-- 修复位移逻辑：基于容器宽度的单张位移，而非百分比总宽度 -->
-        <div
-          class="carousel-list"
-          :style="{ transform: `translateX(-${currentIndex * carouselWidth}px)`, transition: 'transform 0.5s ease-in-out' }"
-        >
+        <div class="carousel-list"
+          :style="{ transform: `translateX(-${currentIndex * carouselWidth}px)`, transition: 'transform 0.5s ease-in-out' }">
           <div class="carousel-item" v-for="(item, index) in carouselImages" :key="index">
             <img :src="item.src" :alt="item.alt" class="carousel-img" />
           </div>
@@ -46,13 +44,13 @@ const carouselImages = ref([
   { src: '/Images/ct5.jpg', alt: '轮播图5' }
 ])
 const currentIndex = ref(0)
-let carouselTimer: NodeJS.Timeout | null = null
+let carouselTimer: number | null = null
 const carouselWidth = ref(0) // 单个轮播项宽度（与容器宽度一致）
 
 // 获取轮播容器宽度（关键：确保位移精准）
 const getCarouselWidth = () => {
   nextTick(() => {
-    const container = document.querySelector('.carousel-container')
+    const container = document.querySelector('.carousel-container') as HTMLElement
     if (container) {
       carouselWidth.value = container.offsetWidth
     }
@@ -187,9 +185,11 @@ onUnmounted(() => {
 }
 
 .carousel-item {
-  width: 100%; /* 单个项宽度与容器一致，关键！ */
+  width: 100%;
+  /* 单个项宽度与容器一致，关键！ */
   height: 100%;
-  flex-shrink: 0; /* 禁止压缩，确保单张显示 */
+  flex-shrink: 0;
+  /* 禁止压缩，确保单张显示 */
 }
 
 .carousel-img {
