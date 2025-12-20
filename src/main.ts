@@ -17,7 +17,8 @@ import router from './router'
 import element from 'element-plus'
 import 'element-plus/dist/index.css'
 
-import SlideShow from './components/SlideShow.vue'
+// 修改导入方式，使用命名导入替代默认导入
+import * as SlideShow from './components/SlideShow.vue'
 import ImageCard from './components/ImageCard.vue'
 import TextCard from './components/TextCard.vue'
 

@@ -4,11 +4,7 @@
     <div class="header">
       <div class="nav-tabs">
         <div class="backarrow">
-          <button 
-            class="backbtn" 
-            :style="{ backgroundImage: `url(${getImageSrc('backbtn.png')})` }" 
-            @click="clickBack"
-          >
+          <button class="backbtn" :style="{ backgroundImage: `url(${getImageSrc('backbtn.png')})` }" @click="clickBack">
             <img :src="getImageSrc('barrow.png')" alt="返回" class="back-icon">
           </button>
         </div>
@@ -18,11 +14,11 @@
     <!-- 分割布局容器 -->
     <div class="split-container">
       <!-- 左侧：动态背景图区域 -->
-      <div class="left-panel" :style="{ backgroundImage: `url(${leftImageList[activeIndex].url})` }">
+      <div class="left-panel" :style="{ backgroundImage: `url(${leftImageList[activeIndex]?.url})` }">
         <!-- 装饰性遮罩层 -->
         <div class="left-mask"></div>
         <!-- 英雄名称标题（行楷字体） -->
-        <h1 class="title">{{ buttonList[activeIndex].name }}</h1>
+        <h1 class="title">{{ buttonList[activeIndex]?.name }}</h1>
         <!-- 装饰性边框 -->
         <div class="decor-border top-left"></div>
         <div class="decor-border bottom-right"></div>
@@ -32,13 +28,8 @@
       <div class="right-panel">
         <!-- 按钮组（按钮文字行楷） -->
         <div class="btn-group">
-          <button 
-            v-for="(btn, index) in buttonList" 
-            :key="index" 
-            class="hero-btn"
-            :class="{ active: activeIndex === index }" 
-            @click="switchImage(index)"
-          >
+          <button v-for="(btn, index) in buttonList" :key="index" class="hero-btn"
+            :class="{ active: activeIndex === index }" @click="switchImage(index)">
             {{ btn.name }}
           </button>
         </div>
@@ -46,12 +37,8 @@
         <!-- 原图展示区域（带装饰卡片） -->
         <div class="image-card">
           <div class="image-wrapper">
-            <img 
-              :src="rightImageList[activeIndex].url" 
-              :alt="buttonList[activeIndex].name" 
-              class="hero-image" 
-              loading="lazy"
-            >
+            <img :src="rightImageList[activeIndex]?.url" :alt="buttonList[activeIndex]?.name" class="hero-image"
+              loading="lazy">
           </div>
         </div>
       </div>
@@ -69,7 +56,7 @@ const clickBack = () => {
 }
 
 // 按钮名称列表（对应图片）
-const buttonList = ref([
+const buttonList = ref<Array<{ name: string }>>([
   { name: '无尘' },
   { name: '岳山' },
   { name: '季沧海' },
@@ -81,34 +68,34 @@ const buttonList = ref([
 ]);
 
 // 左侧背景图列表（public/Images下的图片，路径以/Images/开头）
-const leftImageList = ref([
-  { url: '/Images/wc1.jpg' },    
-  { url: '/Images/ys1.jpg' },    
-  { url: '/Images/jch1.jpg' },  
-  { url: '/Images/th1.jpg' },    
-  { url: '/Images/nhy1.jpg' },  
-  { url: '/Images/liul1.jpg' },    
-  { url: '/Images/hd1.jpg' },    
-  { url: '/Images/hw1.jpg' },    
+const leftImageList = ref<Array<{ url: string }>>([
+  { url: '/Images/wc1.jpg' },
+  { url: '/Images/ys1.jpg' },
+  { url: '/Images/jch1.jpg' },
+  { url: '/Images/th1.jpg' },
+  { url: '/Images/nhy1.jpg' },
+  { url: '/Images/liul1.jpg' },
+  { url: '/Images/hd1.jpg' },
+  { url: '/Images/hw1.jpg' },
 ]);
 
 // 右侧展示图列表（public/Images下的图片，路径以/Images/开头）
 const rightImageList = ref([
-  { url: '/Images/wc.png' },   
-  { url: '/Images/ys.png' },   
-  { url: '/Images/jch.png' }, 
-  { url: '/Images/th.png' },   
-  { url: '/Images/nhy.png' }, 
-  { url: '/Images/liul.png' },   
-  { url: '/Images/hd.png' },   
-  { url: '/Images/hw.png' },   
+  { url: '/Images/wc.png' },
+  { url: '/Images/ys.png' },
+  { url: '/Images/jch.png' },
+  { url: '/Images/th.png' },
+  { url: '/Images/nhy.png' },
+  { url: '/Images/liul.png' },
+  { url: '/Images/hd.png' },
+  { url: '/Images/hw.png' },
 ]);
 
 // 当前激活的图片索引
 const activeIndex = ref(0);
 
 // 切换图片方法（同步切换左右图）
-const switchImage = (index) => {
+const switchImage = (index: number) => {
   activeIndex.value = index;
 };
 </script>
@@ -127,7 +114,7 @@ const switchImage = (index) => {
   width: 100%;
   height: 80px;
   position: relative;
-  background: 
+  background:
     url('/Images/logo.png') no-repeat 40px 15px / contain,
     url('/Images/header_bg.jpg') no-repeat center center / cover,
     linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 100%);
@@ -225,12 +212,10 @@ const switchImage = (index) => {
   .left-mask {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      45deg, 
-      rgba(0, 0, 0, 0.7) 0%, 
-      rgba(0, 0, 0, 0.4) 50%, 
-      rgba(0, 0, 0, 0.7) 100%
-    );
+    background: linear-gradient(45deg,
+        rgba(0, 0, 0, 0.7) 0%,
+        rgba(0, 0, 0, 0.4) 50%,
+        rgba(0, 0, 0, 0.7) 100%);
     z-index: 1;
   }
 
@@ -265,7 +250,8 @@ const switchImage = (index) => {
   /* 行楷字体优先级：华文行楷 > 微软行楷 > 楷体 > 通用衬线字体 */
   font-family: "STXingkai", "Microsoft YaHei UI", "KaiTi", "SimKai", serif;
   font-weight: 500;
-  letter-spacing: 4px; /* 增加字间距更符合行楷风格 */
+  letter-spacing: 4px;
+  /* 增加字间距更符合行楷风格 */
   z-index: 3;
   text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   background: linear-gradient(90deg, #ffffff, #e0e0e0);
@@ -323,14 +309,16 @@ const switchImage = (index) => {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   cursor: pointer;
-  font-size: 18px; /* 放大按钮字体更适配行楷 */
+  font-size: 18px;
+  /* 放大按钮字体更适配行楷 */
   /* 行楷字体优先级：华文行楷 > 微软行楷 > 楷体 > 通用衬线字体 */
   font-family: "STXingkai", "Microsoft YaHei UI", "KaiTi", "SimKai", serif;
   font-weight: 500;
   transition: all 0.4s ease;
   position: relative;
   overflow: hidden;
-  letter-spacing: 2px; /* 行楷增加字间距更美观 */
+  letter-spacing: 2px;
+  /* 行楷增加字间距更美观 */
 
   &::before {
     content: '';
@@ -366,8 +354,8 @@ const switchImage = (index) => {
       border-radius: 10px;
       padding: 1px;
       background: linear-gradient(90deg, #0099ff, #00ccff);
-      -webkit-mask: 
-        linear-gradient(#fff 0 0) content-box, 
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask-composite: exclude;
@@ -382,7 +370,7 @@ const switchImage = (index) => {
   width: 100%;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 
+  box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.4),
     0 0 0 1px rgba(255, 255, 255, 0.05);
   position: relative;
@@ -391,7 +379,7 @@ const switchImage = (index) => {
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 
+    box-shadow:
       0 15px 40px rgba(0, 0, 0, 0.5),
       0 0 0 1px rgba(0, 153, 255, 0.1);
   }
@@ -437,6 +425,7 @@ const switchImage = (index) => {
     font-size: 36px;
     letter-spacing: 3px;
   }
+
   .hero-btn {
     font-size: 16px;
     letter-spacing: 1.5px;
@@ -447,36 +436,36 @@ const switchImage = (index) => {
   .split-container {
     flex-direction: column;
   }
-  
+
   .left-panel {
     min-height: 400px;
   }
-  
+
   .title {
     font-size: 32px;
     letter-spacing: 2px;
   }
-  
+
   .right-panel {
     padding: 40px 20px;
     gap: 30px;
   }
-  
+
   .btn-group {
     gap: 10px;
     padding: 15px;
   }
-  
+
   .hero-btn {
     padding: 12px 20px;
     font-size: 15px;
     letter-spacing: 1px;
   }
-  
+
   .header .backarrow {
     left: 40px;
   }
-  
+
   .decor-border {
     width: 60px;
     height: 60px;
@@ -487,26 +476,26 @@ const switchImage = (index) => {
   .left-panel {
     min-height: 300px;
   }
-  
+
   .title {
     font-size: 28px;
     letter-spacing: 2px;
   }
-  
+
   .hero-btn {
     padding: 10px 16px;
     font-size: 14px;
     letter-spacing: 1px;
   }
-  
+
   .image-card {
     border-radius: 12px;
   }
-  
+
   .header {
     height: 70px;
   }
-  
+
   .header .backarrow {
     width: 100px;
     height: 50px;

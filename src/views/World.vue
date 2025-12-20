@@ -55,11 +55,12 @@ const changetext = () => {
     currentbook.value = item!.book
     if (item?.type == 1) {
         const texts = item.more![currentypeindex.value]?.texts!
-        // 转换为对象数组
         currenttexts.value = texts.map(text => ({ text }))
     } else if (item?.type == 2) {
         const texts = item.texts!
-        currenttexts.value = texts.map(text => ({ text }))
+        if (Array.isArray(item.texts)) {
+            currenttexts.value = texts.map(text => ({ text }))
+        }
     }
 }
 

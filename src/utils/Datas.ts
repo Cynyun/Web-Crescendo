@@ -1,6 +1,22 @@
 import { ref } from "vue"
 import { getImageSrc } from "@/config"
-export const datas = ref([
+
+interface MoreItem {
+    title: string
+    bk: string
+    texts: string[]
+}
+
+interface DataItem {
+    type: 1 | 2
+    title: string
+    book: string
+    bk?: string
+    more?: MoreItem[]
+    texts?: string[]
+}
+
+export const datas = ref<DataItem[]>([
     {
         type: 1,
         title: '龙隐洞天',

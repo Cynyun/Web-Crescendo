@@ -9,7 +9,8 @@
             :effect="'creative'" :creative-effect="creativeEffectOptions" :speed="500" :autoplay="{
                 delay: 3000,
                 disableOnInteraction: false
-            }" @init="onSwiperInit" @slide-change="onSlideChange" class="my-swiper" @v-click="handleContainerClick">
+            } as any" @init="onSwiperInit" @slide-change="onSlideChange" class="my-swiper"
+            @v-click="handleContainerClick">
             <SwiperSlide v-for="(image, index) in images" :key="index">
                 <!-- <a :href="image.link" target="_blank" rel="noopener noreferrer"> -->
                 <img :src="image.src" alt="" class="slide-img" />
@@ -188,6 +189,10 @@ const onSwiperInit = (swiper: any) => {
 const onSlideChange = (swiper: any) => {
     currentIndex.value = swiper.realIndex
 }
+
+defineOptions({
+    name: 'SlideShow'
+})
 </script>
 
 <style scoped>

@@ -44,7 +44,7 @@ const carouselImages = ref([
   { src: '/Images/ct5.jpg', alt: '轮播图5' }
 ])
 const currentIndex = ref(0)
-let carouselTimer: number | null = null
+let carouselTimer: ReturnType<typeof setInterval> | null = null
 const carouselWidth = ref(0) // 单个轮播项宽度（与容器宽度一致）
 
 // 获取轮播容器宽度（关键：确保位移精准）
