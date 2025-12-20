@@ -5,25 +5,20 @@
             <div class="designed">
                 <!-- 已登录：显示用户名 + 退出按钮 -->
                 <div v-if="userStore.isLoggedIn" class="user-info">
-                    欢迎，{{ userStore.userInfo?.nickname }}
-                    <el-button type="danger" size="small" @click="handleLogout" style="margin-left: 10px">
+                    <p style="width: 50px; color: white;">欢迎，{{ userStore.userInfo?.nickname }}</p>
+                    <NewButton type="danger" size="small" @click="handleLogout" style="margin-left: 10px">
                         退出
-                    </el-button>
+                    </NewButton>
                 </div>
 
                 <!-- 未登录：显示注册（和/或登录）按钮 -->
                 <div v-else class="auth-buttons">
-                    <NewButton type="primary" size="small" @click="showRegister = true">
-                        注册
-                    </NewButton>
-                    <!-- 可选：添加登录按钮 -->
+                    <NewButton type="primary" size="small" @click="showRegister = true">注册</NewButton>
                     <NewButton size="small" @click="showLogin = true">登录</NewButton>
                 </div>
-
                 <!-- 注册弹窗 -->
                 <RegisterModal v-model:visible="showRegister" />
-
-                <!-- 登录弹窗（可选） -->
+                <!-- 登录弹窗 -->
                 <LoginModal v-model:visible="showLogin" />
             </div>
         </div>
@@ -91,6 +86,9 @@ const handleLogout = () => {
     background: linear-gradient(90deg, var(--color-green-defaultGrey), var(--color-cyan-defaultGrey));
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
     span {
         background: linear-gradient(90deg, var(--color-green-lightGrey), var(--color-cyan-lightGrey));
@@ -98,7 +96,8 @@ const handleLogout = () => {
         background-clip: text;
         color: transparent;
         transition: transform 0.3s ease;
-
+        position: absolute;
+        left: 20px;
         margin-left: 20px;
         line-height: 80px;
         font-size: 36px;
@@ -107,14 +106,21 @@ const handleLogout = () => {
     }
 
     .designed {
-        width: auto;
+        width: 150px;
         height: 80px;
         position: absolute;
         right: 20px;
         display: flex;
         align-items: center;
+        justify-content: center;
         background-color: none;
         gap: 8px;
+
+        .user-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
         .auth-buttons {
             display: flex;
@@ -162,8 +168,8 @@ const handleLogout = () => {
     margin-bottom: 10px;
     display: grid;
     grid-template-columns: minmax(100px, 3fr) minmax(200px, 8fr) minmax(100px, 3fr);
-    // align-items: center;
-    // justify-content: center;
+    align-items: center;
+    justify-content: center;
 
     .mid {
         display: flex;
@@ -181,7 +187,6 @@ const handleLogout = () => {
                 height: 500px;
             }
         }
-
     }
 
     .left,

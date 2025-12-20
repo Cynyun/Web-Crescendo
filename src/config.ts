@@ -23,6 +23,11 @@ export const COLORS = {
     defaultGrey: '#63c8c8ff', // 普灰
     dark: '#00FFFFff', // 亮色
     darkGrey: '#00b8b8ff', // 深灰
+  },
+  text: {
+    cyan: '#00FFFFff', // 亮色
+    green: '#00ff00ff', // 亮色
+    purple: 'rgba(151, 65, 252, 0.2)', // 紫色
   }
 }
 

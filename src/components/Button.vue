@@ -13,6 +13,7 @@
 const props = defineProps<{
     disabled?: boolean
     loading?: boolean
+    onClick?: (event: MouseEvent) => void
 }>()
 
 // 定义 emit
@@ -24,7 +25,12 @@ const emit = defineEmits<{
 const handleClick = (event: MouseEvent) => {
     // 正确方式：直接使用 props，不用 this
     if (props.disabled || props.loading) return
+    // 标准 Vue 事件
     emit('click', event)
+    // onClick 回调
+    if (props.onClick) {
+        props.onClick(event)
+    }
 }
 </script>
 
@@ -90,7 +96,6 @@ const handleClick = (event: MouseEvent) => {
 }
 
 .gradient-button span {
-    background-color: linear-gradient(90deg, var(--color-cyan-defaultGrey), var(--color-green-defaultGrey));
     padding: 3px;
     border-radius: 6px;
     width: 100%;

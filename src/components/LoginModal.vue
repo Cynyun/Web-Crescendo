@@ -1,27 +1,29 @@
 <!-- src/components/LoginModal.vue -->
 <template>
-    <el-dialog v-model="dialogVisible" title="用户登录" width="400px" :close-on-click-modal="false" @close="resetForm"
-        class="login-dialog">
-        <el-form ref="formRef" :model="form" :rules="rules" label-width="80px" size="default">
-            <!-- 合并为一个字段：支持昵称或邮箱 -->
-            <el-form-item label="账号" prop="loginId">
-                <el-input v-model="form.loginId" placeholder="请输入昵称或邮箱" />
-            </el-form-item>
+    <div class="logintable">
+        <el-dialog v-model="dialogVisible" title="用户登录" width="400px" :close-on-click-modal="false" @close="resetForm"
+            class="login-dialog">
+            <el-form ref="formRef" :model="form" :rules="rules" label-width="80px" size="default">
+                <!-- 合并为一个字段：支持昵称或邮箱 -->
+                <el-form-item label="账号" prop="loginId">
+                    <el-input v-model="form.loginId" placeholder="请输入昵称或邮箱" />
+                </el-form-item>
 
-            <el-form-item label="密码" prop="password">
-                <el-input v-model="form.password" type="password" show-password placeholder="请输入密码" />
-            </el-form-item>
-        </el-form>
+                <el-form-item label="密码" prop="password">
+                    <el-input v-model="form.password" type="password" show-password placeholder="请输入密码" />
+                </el-form-item>
+            </el-form>
 
-        <template #footer>
-            <div style="display: flex; gap: 12px; justify-content: flex-end; width: 100%;">
-                <NewButton @click="closeDialog">取消</NewButton>
-                <NewButton :loading="loading" @click="handleSubmit">
-                    {{ loading ? '登录中...' : '登录' }}
-                </NewButton>
-            </div>
-        </template>
-    </el-dialog>
+            <template #footer>
+                <div style="display: flex; gap: 12px; justify-content: flex-end; width: 100%;">
+                    <NewButton @click="closeDialog">取消</NewButton>
+                    <NewButton :loading="loading" @click="handleSubmit">
+                        {{ loading ? '登录中...' : '登录' }}
+                    </NewButton>
+                </div>
+            </template>
+        </el-dialog>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -30,14 +32,19 @@ import type { FormInstance } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
 import NewButton from '@/components/Button.vue' // 引入自定义按钮组件
+import { computed } from 'vue'
 
 // Props & Emit
 const props = defineProps<{ visible: boolean }>()
 const emit = defineEmits<{ (e: 'update:visible', value: boolean): void }>()
 
-const dialogVisible = ref(props.visible)
-watch(() => props.visible, (val) => {
-    dialogVisible.value = val
+const dialogVisible = computed({
+    get() {
+        return props.visible
+    },
+    set(value: boolean) {
+        emit('update:visible', value)
+    }
 })
 
 const closeDialog = () => {
@@ -87,7 +94,7 @@ const userStore = useUserStore()
 
 const handleSubmit = async () => {
     if (!formRef.value) return
-
+    console.log(userStore)
     await formRef.value.validate((valid) => {
         if (valid) {
             loading.value = true
@@ -119,4 +126,123 @@ const resetForm = () => {
 }
 </script>
 
-<!-- 注意：这里不再需要 scoped 样式，因为 GradientButton 已经处理了样式 -->
+<style lang="scss" scoped>
+:deep(.el-dialog) {
+    /* 弹窗主体边框和圆角 */
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    border: 2px solid white;
+    background: linear-gradient(90deg, var(--color-green-default), var(--color-cyan-default));
+}
+
+:deep(.el-dialog__wrapper) {
+    /* 弹窗包装器样式 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+:deep(.el-overlay) {
+    /* 背景模糊效果 */
+    backdrop-filter: blur(3px);
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* 自定义弹窗边缘装饰 */
+.login-dialog {
+    position: relative;
+
+    // color: black;
+    /* 可以在这里添加自定义的边缘装饰元素 */
+    &::before {
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        right: -10px;
+        bottom: -10px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+        border-radius: 16px;
+        z-index: -1;
+        filter: blur(10px);
+    }
+}
+
+:deep(.el-dialog__header) {
+    padding: 10px 24px;
+    margin: 0;
+}
+
+:deep(.el-dialog__title) {
+    // color: var(--color-text-purple);
+    color: rgb(27, 201, 146);
+    font-size: 18px;
+    font-weight: bold;
+}
+
+:deep(.el-dialog__headerbtn) {
+    .el-icon {
+        color: white;
+        font-size: 18px;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    }
+}
+
+:deep(.el-dialog__body) {
+    background: none;
+    padding: 10px 25px 10px 0;
+    margin: 0;
+}
+
+:deep(.el-dialog__footer) {
+    background: none;
+    padding: 0 20px;
+    margin: 0;
+}
+
+:deep(.el-form) {
+    .el-form-item {
+        margin-bottom: 20px;
+
+        .el-form-item__label {
+            font-weight: bold;
+            color: #495057;
+        }
+    }
+}
+
+:deep(.el-input) {
+    .el-input__wrapper {
+        background: transparent !important;
+        border-radius: 0 !important;
+        box-shadow: none !important; // 边框来源
+        position: relative;
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background-color: white;
+            transition: width 0.3s ease;
+        }
+
+        &:hover::after,
+        &.is-focus::after {
+            width: 100%;
+        }
+
+        // 错误状态样式 - 无效
+        &.is-error::after {
+            background-color: red;
+            width: 100%;
+        }
+    }
+}
+</style>
