@@ -2,87 +2,95 @@
     <div class="slideshow">
         <!-- 预览项 -->
         <img :src="images[previewIndex]?.src" v-if="previewIndex !== null && images[previewIndex]"
-            class="preview-overlay">
+            class="preview-overlay" />
 
-        <!-- Swiper 容器 -->
-        <swiper-container ref="swiperEl" :init="false" style="width: 100%; height: 100%" @click="handleContainerClick">
-            <swiper-slide v-for="(image, index) in images" :key="index">
+        <!-- 使用 Vue 版 Swiper 组件 -->
+        <Swiper ref="swiperEl" :modules="[Navigation, Pagination, Autoplay, EffectCreative]" :loop="true"
+            :effect="'creative'" :creative-effect="creativeEffectOptions" :speed="500" :autoplay="{
+                delay: 3000,
+                disableOnInteraction: false
+            }" @init="onSwiperInit" @slide-change="onSlideChange" class="my-swiper" @click="handleContainerClick">
+            <SwiperSlide v-for="(image, index) in images" :key="index">
                 <a :href="image.link" target="_blank" rel="noopener noreferrer">
                     <img :src="image.src" alt="" class="slide-img" />
                 </a>
-            </swiper-slide>
-        </swiper-container>
+            </SwiperSlide>
+        </Swiper>
 
-        <!-- 左侧图标 -->
+        <!-- 左右导航图标（保持不变） -->
         <div class="nav-icon left-icon" @click="goToPrev" @mouseenter="pauseAutoplay" @mouseleave="resumeAutoplay">
             <i class="iconfont icon-left"></i>
         </div>
-
-        <!-- 右侧图标 -->
         <div class="nav-icon right-icon" @click="goToNext" @mouseenter="pauseAutoplay" @mouseleave="resumeAutoplay">
             <i class="iconfont icon-right-copy"></i>
         </div>
 
-        <!-- 自定义数字分页器 -->
-        <!-- 分页器 -->
+        <!-- 自定义分页器（保持不变） -->
         <div v-if="showPagination" :class="['custom-pagination', { 'dot-mode': paginationType === 'dot' }]">
             <button v-for="index in visibleIndexes" :key="index" :class="{ active: currentIndex === index }"
                 @click="handleBulletClick(index)" @mouseenter="() => handleBulletEnter(index)"
                 @mouseleave="handleBulletLeave" class="bullet">
-                <!-- 根据 paginationType 决定显示内容 -->
                 <span v-if="paginationType === 'number'">{{ index + 1 }}</span>
-                <span v-else>&nbsp;</span> <!-- dot 模式：空内容，靠样式撑开 -->
+                <span v-else>&nbsp;</span>
             </button>
         </div>
     </div>
 </template>
 
-<script setup>
-import { ref, onMounted, computed } from 'vue'
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+// 导入 Swiper Vue 组件
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import 'swiper/css'
+import 'swiper/css/effect-creative'
+
+// 导入所需模块
+import { Navigation, Pagination, Autoplay, EffectCreative } from 'swiper/modules'
 
 // Props 接口定义
 const props = defineProps({
-    images: {
-        type: Array,
-        required: true
-    },
-    maxVisibleBullets: {
-        type: Number,
-        default: 5
-    },
-    showPagination: {
-        type: Boolean,
-        default: true
-    },
+    images: { type: Array, required: true },
+    maxVisibleBullets: { type: Number, default: 5 },
+    showPagination: { type: Boolean, default: true },
     paginationType: {
         type: String,
         default: 'number',
-        validator(value) {
-            return ['number', 'dot'].includes(value)
-        }
+        validator: (value: string) => ['number', 'dot'].includes(value)
     }
 })
 
 // swiper组件ref
-const swiperEl = ref(null)
+const swiperEl = ref<any>(null) // 类型可细化为 SwiperInstance，但 any 也可用
 
 // 当前页码索引
 const currentIndex = ref(0)
 
 // 当前预览索引
-const previewIndex = ref(null)
+const previewIndex = ref<number | null>(null)
 
-// 更新预览按钮数据
+// Creative Effect 配置（提取为响应式对象）
+const creativeEffectOptions = {
+    prev: {
+        translate: ['-100%', 0, 0],
+        opacity: 0.3
+    },
+    next: {
+        translate: ['100%', 0, 0],
+        opacity: 0.3
+    },
+    limitProgress: 1,
+    perspective: true
+}
+
+// 计算可见分页索引
 const visibleIndexes = computed(() => {
     const total = props.images.length
     if (total <= props.maxVisibleBullets) {
         return Array.from({ length: total }, (_, i) => i)
     }
     const current = currentIndex.value
-    let start, end
-    const half = Math.floor(props.maxVisibleBullets / 2)
-    start = current - half
-    end = current + half
+    let start = current - Math.floor(props.maxVisibleBullets / 2)
+    let end = current + Math.floor(props.maxVisibleBullets / 2)
     if (start < 0) {
         start = 0
         end = props.maxVisibleBullets - 1
@@ -96,7 +104,7 @@ const visibleIndexes = computed(() => {
 
 // 暂停自动播放
 const pauseAutoplay = () => {
-    if (swiperEl.value?.swiper?.autoplay) {
+    if (swiperEl.value?.swiper?.autoplay?.running) {
         swiperEl.value.swiper.autoplay.stop()
     }
 }
@@ -115,104 +123,64 @@ const resetAutoplay = () => {
 }
 
 // 点击左右半屏切换
-const handleContainerClick = (event) => {
-    if (!swiperEl.value?.swiper) return
+const handleContainerClick = (event: MouseEvent) => {
+    const target = (event.target as HTMLElement).closest('.nav-icon')
+    if (target) return
 
     // 判断是否点击的是图标区域
-    const target = event.target.closest('.nav-icon')
-    if (target) return // 忽略图标点击
+    const container = swiperEl.value?.$el as HTMLElement
+    if (!container) return // 忽略图标点击
 
-    const containerRect = swiperEl.value.getBoundingClientRect()
-    const clickX = event.clientX - containerRect.left
-    const containerWidth = containerRect.width
-
-    if (clickX < containerWidth / 2) {
+    const rect = container.getBoundingClientRect()
+    const clickX = event.clientX - rect.left
+    if (clickX < rect.width / 2) {
         // 点击左半屏：上一张（带 loop）
-        swiperEl.value.swiper.slidePrev()
+        swiperEl.value?.swiper?.slidePrev()
     } else {
         // 点击右半屏：下一张（带 loop）
-        swiperEl.value.swiper.slideNext()
+        swiperEl.value?.swiper?.slideNext()
     }
     resetAutoplay()
 }
 
 // 滑动到指定页码
-const goToSlide = (index) => {
-    if (swiperEl.value?.swiper) {
-        swiperEl.value.swiper.slideToLoop(index)
-        currentIndex.value = index
-        resetAutoplay()
-    }
+const goToPrev = () => {
+    swiperEl.value?.swiper?.slidePrev()
+    resetAutoplay()
 }
 
 // 往前滑动
-const goToPrev = () => {
-    if (swiperEl.value?.swiper) {
-        swiperEl.value.swiper.slidePrev()
-        resetAutoplay()
-    }
-}
-
-// 往后滑动
 const goToNext = () => {
-    if (swiperEl.value?.swiper) {
-        swiperEl.value.swiper.slideNext()
-        resetAutoplay()
-    }
+    swiperEl.value?.swiper?.slideNext()
+    resetAutoplay()
 }
 
 // 鼠标进入按钮：开始预览
-const handleBulletEnter = (index) => {
+const handleBulletEnter = (index: number) => {
     previewIndex.value = index
-    pauseAutoplay() // 悬停暂停自动播放
+    pauseAutoplay()
 }
 
 // 鼠标离开按钮：取消预览
 const handleBulletLeave = () => {
     previewIndex.value = null
-    resumeAutoplay() // 恢复自动播放
+    resumeAutoplay()
 }
 
 // 点击按钮：真正切换
-const handleBulletClick = (index) => {
-    goToSlide(index)
-    // previewIndex 会在 goToSlide 后被覆盖，无需手动清空
+const handleBulletClick = (index: number) => {
+    swiperEl.value?.swiper?.slideToLoop(index)
+    resetAutoplay()
 }
 
-onMounted(() => {
-    if (!swiperEl.value) return
-    // 配置 Swiper 参数
-    Object.assign(swiperEl.value, {
-        loop: true,
-        effect: 'creative',
-        creativeEffect: {
-            prev: {
-                translate: ['-100%', 0, 0],
-                opacity: 0.3,
-            },
-            next: {
-                translate: ['100%', 0, 0],
-                opacity: 0.3,
-            },
-            limitProgress: 1,
-            perspective: true,
-        },
-        speed: 500,
-        autoplay: {
-            delay: 3000,
-            disableOnInteraction: false,
-        },
-        on: {
-            init(swiper) {
-                currentIndex.value = swiper.realIndex
-            },
-            slideChange(swiper) {
-                currentIndex.value = swiper.realIndex
-            }
-        }
-    })
-    swiperEl.value.initialize()
-})
+// Swiper 生命周期
+const onSwiperInit = (swiper: any) => {
+    currentIndex.value = swiper.realIndex
+}
+
+const onSlideChange = (swiper: any) => {
+    currentIndex.value = swiper.realIndex
+}
 </script>
 
 <style scoped>

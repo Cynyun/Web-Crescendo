@@ -7,31 +7,37 @@ import getImageSrc from './config' // 图片
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
-import { enableScrollbarAutoHide } from './utils/scrollbarAutoHide' // 滚动条ts
+import { enableScrollbarAutoHide } from './utils/ScrollbarAutoHide' // 滚动条ts
 enableScrollbarAutoHide(2000)
 
 import App from './App.vue'
 import router from './router'
 
+// Element-Plus Components
+import element from 'element-plus'
+import 'element-plus/dist/index.css'
+
 import SlideShow from './components/SlideShow.vue'
 import ImageCard from './components/ImageCard.vue'
 import TextCard from './components/TextCard.vue'
 
-// 全局注册 Swiper Web Components
+// Swiper Web Components
 import { register } from 'swiper/element/bundle'
 if (!customElements.get('swiper-container')) {
   register()
 }
-
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
 app.use(getImageSrc)
+app.use(element)
 
 app.component('SlideShow', SlideShow)
 app.component('ImageCard', ImageCard)
 app.component('TextCard', TextCard)
+app.component('TextCard', TextCard)
+
 
 app.mount('#app')
