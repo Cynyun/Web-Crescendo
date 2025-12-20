@@ -116,12 +116,90 @@ Web-Crescendo is a personal web journal for documenting gaming achievements, ref
 
 ## 项目使用组件介绍:
 
-- Vue3 : 渐进式 JavaScript 框架，以组合式 API（Composition API）为核心，支持响应式系统与组件化开发。本项目充分利用其 ``` <script setup> ``` 语法糖、响应式工具（如 ref、reactive）及生命周期钩子，实现高内聚、低耦合的组件结构
+### 核心框架与工具
+- **Vue3** : 渐进式 JavaScript 框架，以组合式 API（Composition API）为核心，支持响应式系统与组件化开发。本项目充分利用其 `<script setup>` 语法糖、响应式工具（如 ref、reactive）及生命周期钩子，实现高内聚、低耦合的组件结构
 
-- Vite : 新一代前端构建脚手架工具，利用原生 ES 模块（ESM）和按需编译策略，提供极速的冷启动与热更新体验。作为项目的开发服务器与构建器，显著提升开发效率与构建性能。
+- **Vite** : 新一代前端构建脚手架工具，利用原生 ES 模块（ESM）和按需编译策略，提供极速的冷启动与热更新体验。作为项目的开发服务器与构建器，显著提升开发效率与构建性能。
 
-- Pinia : Vue 官方推荐的状态管理库，替代 Vuex。提供简洁的 store 设计、完整的 TypeScript 支持、模块化组织方式，并天然集成 Vue DevTools，便于调试全局状态。
+- **Pinia** : Vue 官方推荐的状态管理库，替代 Vuex。提供简洁的 store 设计、完整的 TypeScript 支持、模块化组织方式，并天然集成 Vue DevTools，便于调试全局状态。
 
-- TypeScript : JavaScript 的超集，通过静态类型系统增强代码可读性、可维护性与健壮性。在编译期捕获潜在错误，提升大型项目协作效率与开发体验。
+- **TypeScript** : JavaScript 的超集，通过静态类型系统增强代码可读性、可维护性与健壮性。在编译期捕获潜在错误，提升大型项目协作效率与开发体验。
 
-- ... : 更多待补充
+### UI 组件库
+- **Element Plus** : Vue 3 生态的企业级 UI 组件库，提供了丰富的组件如对话框、表单、输入框等，本项目用于实现登录模态框等交互元素。
+
+### 特殊组件
+- **SlideShow** : 基于 Swiper 实现的图片轮播组件，支持自定义分页器（数字/圆点模式）、自动播放、点击切换等功能。注意：由于使用 `<script setup>` 语法，该组件需要使用命名导入方式注册：
+  ```typescript
+  // 正确的导入方式
+  import * as SlideShow from './components/SlideShow.vue'
+  app.component('SlideShow', SlideShow)
+  ```
+
+- **ImageCard** : 图片卡片组件，用于展示图片内容
+
+- **TextCard** : 文本卡片组件，用于展示文本内容
+
+### 第三方库
+- **Swiper** : 现代化的轮播图库，用于实现 SlideShow 组件的核心功能
+- **js-cookie** : 用于操作浏览器 Cookie 的库
+- **SASS** : CSS 预处理器，用于编写更强大的样式代码
+
+## 常见问题与解决方案
+
+### 1. 构建错误："SlideShow not exported"
+**错误信息**：构建时出现 "Module has no default export" 错误
+
+**原因**：使用 `<script setup>` 语法的组件不会自动生成默认导出，只能通过命名导入使用
+
+**解决方案**：修改 `main.ts` 中的导入方式，使用命名导入替代默认导入：
+```typescript
+// 错误的导入方式
+import SlideShow from './components/SlideShow.vue'
+
+// 正确的导入方式
+import * as SlideShow from './components/SlideShow.vue'
+```
+
+### 2. 样式不生效问题
+**问题**：对 Element Plus 组件（如 `el-dialog`、`el-input`）的样式修改不生效
+
+**解决方案**：使用 Vue 3 的 `:deep()` 选择器穿透组件的作用域样式：
+```scss
+:deep(.el-dialog) {
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+```
+
+### 3. 输入框错误边框移除
+**问题**：需要移除输入框的默认边框和验证错误时的红色边框
+
+**解决方案**：使用 `:deep()` 选择器和 CSS 变量覆盖默认样式：
+```scss
+:deep(.el-input__wrapper) {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  --el-input-border-color: transparent !important;
+  --el-input-error-border-color: transparent !important;
+}
+```
+
+## 开发注意事项
+
+1. **组件导入规范**：使用 `<script setup>` 语法的组件必须使用命名导入方式注册
+2. **样式规范**：对第三方组件的样式修改需使用 `:deep()` 选择器
+3. **TypeScript 规范**：遵循项目中的类型定义和接口规范
+4. **提交规范**：使用语义化提交信息，如 `feat: 添加新功能`、`fix: 修复 bug`
+
+## 浏览器兼容性
+
+- Chrome (推荐)
+- Firefox
+- Safari
+- Edge (推荐)
+
+## License
+
+MIT License
