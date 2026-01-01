@@ -21,6 +21,7 @@ import 'element-plus/dist/index.css'
 import * as SlideShow from './components/SlideShow.vue'
 import ImageCard from './components/ImageCard.vue'
 import TextCard from './components/TextCard.vue'
+import GradientText from './components/GradientText.vue'
 
 // Swiper Web Components
 import { register } from 'swiper/element/bundle'
@@ -39,6 +40,6 @@ app.component('SlideShow', SlideShow)
 app.component('ImageCard', ImageCard)
 app.component('TextCard', TextCard)
 app.component('TextCard', TextCard)
-
+app.component('GradientText', GradientText)
 
 app.mount('#app')

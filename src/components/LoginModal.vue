@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive } from 'vue'
 import type { FormInstance } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
@@ -55,6 +55,7 @@ const closeDialog = () => {
 // 表单
 const formRef = ref<FormInstance>()
 const loading = ref(false)
+const isSubmitting = ref(false) // 防止重复提交
 
 const form = reactive({
     loginId: '',
@@ -94,26 +95,45 @@ const userStore = useUserStore()
 
 const handleSubmit = async () => {
     if (!formRef.value) return
-    console.log(userStore)
-    await formRef.value.validate((valid) => {
-        if (valid) {
-            loading.value = true
+    // 防止重复提交
+    if (isSubmitting.value || loading.value) return
+    isSubmitting.value = true
+    
+    try {
+        await formRef.value.validate((valid) => {
+            if (valid) {
+                loading.value = true
 
-            setTimeout(() => {
-                const mockUser = {
-                    id: 123,
-                    name: form.loginId.includes('@') ? '用户' : form.loginId,
-                    email: form.loginId.includes('@') ? form.loginId : `${form.loginId}@example.com`,
-                    token: `mock_token_${Date.now()}`
-                }
+                setTimeout(() => {
+                    // 假设从数据库获取到了用户信息
+                    const mockUser = {
+                        id: 123,
+                        nickname: form.loginId.includes('@') ? '用户' : form.loginId,
+                        email: form.loginId.includes('@') ? form.loginId : `${form.loginId}@example.com`,
+                        token: `mock_token_${Date.now()}`
+                    }
 
-                userStore.setUserInfo(mockUser)
-                closeDialog()
-                loading.value = false
-                ElMessage.success(`欢迎回来，${mockUser.name}！`)
-            }, 800)
-        }
-    })
+                    // 确保 nickname 有值
+                    if (!mockUser.nickname || mockUser.nickname.trim() === '') {
+                        mockUser.nickname = '用户'
+                    }
+
+                    userStore.setUserInfo(mockUser)
+                    closeDialog()
+                    loading.value = false
+                    isSubmitting.value = false
+                    // 确保提示消息中 nickname 有值
+                    const displayName = mockUser.nickname || '用户'
+                    ElMessage.success(`欢迎回来，${displayName}！`)
+                }, 800)
+            } else {
+                isSubmitting.value = false
+            }
+        })
+    } catch (error) {
+        isSubmitting.value = false
+        loading.value = false
+    }
 }
 
 // 重置表单

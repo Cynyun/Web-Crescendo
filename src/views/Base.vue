@@ -1,11 +1,11 @@
 <template>
     <div class="container">
         <div class="nav">
-            <span>Web Crescendo</span>
+            <GradientText text="Web Crescendo" />
             <div class="designed">
                 <!-- 已登录：显示用户名 + 退出按钮 -->
                 <div v-if="userStore.isLoggedIn" class="user-info">
-                    <p style="width: 50px; color: white;">欢迎，{{ userStore.userInfo?.nickname }}</p>
+                    <p style="color: white; white-space: nowrap;">欢迎，{{ userName }}</p>
                     <NewButton type="danger" size="small" @click="handleLogout" style="margin-left: 10px">
                         退出
                     </NewButton>
@@ -41,12 +41,20 @@ import router from '@/router';
 import { useUserStore } from '@/stores/user';
 import RegisterModal from '@/components/RegisterModal.vue';
 import LoginModal from '@/components/LoginModal.vue';
-import { ref } from 'vue';
+import GradientText from '@/components/GradientText.vue';
+import { ref, computed } from 'vue';
 import { ElMessage } from 'element-plus'
 import NewButton from '@/components/Button.vue'
 
 // 用户数据
 const userStore = useUserStore()
+
+// 确保响应式的用户名
+const userName = computed(() => {
+    const info = userStore.userInfo
+    // 兼容处理：如果 nickname 不存在，尝试使用 name（旧数据兼容）
+    return info?.nickname || (info as any)?.name || ''
+})
 
 // 显示注册组件
 const showRegister = ref(false)
@@ -63,9 +71,19 @@ const handleClick = () => {
 }
 
 // 退出登录
+const isLoggingOut = ref(false) // 防止重复点击
 const handleLogout = () => {
+    // 防止重复点击
+    if (isLoggingOut.value) return
+    isLoggingOut.value = true
+    
     userStore.clearUserInfo()
     ElMessage.info('已退出登录')
+    
+    // 重置标志，允许下次退出
+    setTimeout(() => {
+        isLoggingOut.value = false
+    }, 1000)
 }
 </script>
 
@@ -90,23 +108,9 @@ const handleLogout = () => {
     align-items: center;
     justify-content: center;
 
-    span {
-        background: linear-gradient(90deg, var(--color-green-lightGrey), var(--color-cyan-lightGrey));
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        transition: transform 0.3s ease;
-        position: absolute;
-        left: 20px;
-        margin-left: 20px;
-        line-height: 80px;
-        font-size: 36px;
-        font-weight: bold;
-        text-align: center;
-    }
 
     .designed {
-        width: 150px;
+        min-width: 200px;
         height: 80px;
         position: absolute;
         right: 20px;
@@ -135,7 +139,7 @@ const handleLogout = () => {
     background: linear-gradient(90deg, var(--color-green-default), var(--color-cyan-default));
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
-    span {
+    :deep(.gradient-text) {
         background: linear-gradient(90deg,
                 var(--color-green-darkGrey),
                 var(--color-cyan-darkGrey),
@@ -145,17 +149,7 @@ const handleLogout = () => {
         background-clip: text;
         color: transparent;
         background-size: 300% 100%;
-        animation: spanAni 2s infinite linear;
-    }
-}
-
-@keyframes spanAni {
-    from {
-        background-position: 0% 0%;
-    }
-
-    to {
-        background-position: 100% 0%;
+        animation: gradient-text-ani 2s infinite linear;
     }
 }
 

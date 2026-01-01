@@ -47,6 +47,7 @@ const visible = defineModel<boolean>('visible', { required: true })
 
 // 加载状态
 const loading = ref(false)
+const isSubmitting = ref(false) // 防止重复提交
 
 // 表单数据
 const form = reactive({
@@ -74,7 +75,9 @@ const rules = {
         { required: true, message: '请确认密码', trigger: 'blur' },
         {
             validator: (rule: any, value: string, callback: any) => {
-                if (value !== form.password) {
+                if (!form.password) {
+                    callback(new Error('请先输入密码再确认密码'))
+                } else if (value !== form.password) {
                     callback(new Error('两次密码不一致'))
                 } else {
                     callback()
@@ -90,34 +93,45 @@ const userStore = useUserStore()
 
 const handleSubmit = async () => {
     if (!formRef.value) return
-    console.log(userStore)
-    await formRef.value.validate((valid) => {
-        if (valid) {
-            loading.value = true
+    // 防止重复提交
+    if (isSubmitting.value || loading.value) return
+    isSubmitting.value = true
+    
+    try {
+        await formRef.value.validate((valid) => {
+            if (valid) {
+                loading.value = true
 
-            // 模拟注册请求（实际应调用后端 API）
-            setTimeout(() => {
-                // 假设注册成功，生成一个 mock token
-                const mockToken = `mock_token_${Date.now()}`
-                const mockId = Date.now() % 10000
+                // 模拟注册请求（实际应调用后端 API）
+                setTimeout(() => {
+                    // 假设注册成功，生成一个 mock token
+                    const mockToken = `mock_token_${Date.now()}`
+                    const mockId = Date.now() % 10000
 
-                // 保存到 Pinia + Cookie
-                userStore.setUserInfo({
-                    id: mockId,
-                    nickname: form.nickname,
-                    email: form.email,
-                    token: mockToken
-                })
+                    // 保存到 Pinia + Cookie
+                    userStore.setUserInfo({
+                        id: mockId,
+                        nickname: form.nickname,
+                        email: form.email,
+                        token: mockToken
+                    })
 
-                // 关闭弹窗
-                visible.value = false
-                loading.value = false
+                    // 关闭弹窗
+                    visible.value = false
+                    loading.value = false
+                    isSubmitting.value = false
 
-                // 可选：提示成功
-                ElMessage.success('注册成功！')
-            }, 800)
-        }
-    })
+                    // 可选：提示成功
+                    ElMessage.success('注册成功！')
+                }, 800)
+            } else {
+                isSubmitting.value = false
+            }
+        })
+    } catch (error) {
+        isSubmitting.value = false
+        loading.value = false
+    }
 }
 
 // 重置表单

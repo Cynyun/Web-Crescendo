@@ -18,7 +18,18 @@
         <!-- 装饰性遮罩层 -->
         <div class="left-mask"></div>
         <!-- 英雄名称标题（行楷字体） -->
-        <h1 class="title">{{ buttonList[activeIndex]?.name }}</h1>
+        <GradientText
+          :text="buttonList[activeIndex]?.name || ''" 
+          tag="h1"
+          :fontSize="48"
+          :fontWeight="500"
+          lineHeight="normal"
+          gradientColors="#ffffff, #e0e0e0"
+          position="relative"
+          left="auto"
+          marginLeft="0"
+          class="person-title"
+        />
         <!-- 装饰性边框 -->
         <div class="decor-border top-left"></div>
         <div class="decor-border bottom-right"></div>
@@ -244,20 +255,13 @@ const switchImage = (index: number) => {
 }
 
 /* 标题样式（行楷字体） */
-.title {
-  color: #ffffff;
-  font-size: 48px;
+.person-title {
   /* 行楷字体优先级：华文行楷 > 微软行楷 > 楷体 > 通用衬线字体 */
   font-family: "STXingkai", "Microsoft YaHei UI", "KaiTi", "SimKai", serif;
-  font-weight: 500;
   letter-spacing: 4px;
   /* 增加字间距更符合行楷风格 */
   z-index: 3;
   text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  background: linear-gradient(90deg, #ffffff, #e0e0e0);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
   position: relative;
 
   &::after {
