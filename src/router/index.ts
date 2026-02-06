@@ -9,19 +9,19 @@ const router = createRouter({
       component: () => import('../views/Base.vue'),
     },
     {
-      path: '/framework',
-      name: 'FrameWork',
-      component: () => import('../views/FrameWork.vue'),
+      path: '/yjwjgame/YJFrameWork',
+      name: 'YJFrameWork',
+      component: () => import('../views/yjwjgame/YJFrameWork.vue'),
     },
     {
-      path: '/world',
-      name: 'World',
-      component: () => import('../views/World.vue'),
+      path: '/yjwjgame/YJWorld',
+      name: 'YJWorld',
+      component: () => import('../views/yjwjgame/YJWorld.vue'),
     },
     {
-      path: '/person',
-      name: 'Person',
-      component: () => import('../views/Person.vue'),
+      path: '/yjwjgame/YJPerson',
+      name: 'YJPerson',
+      component: () => import('../views/yjwjgame/YJPerson.vue'),
     },
   ],
 })

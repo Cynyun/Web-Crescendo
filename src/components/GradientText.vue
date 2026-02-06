@@ -7,6 +7,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useThemeColorStore } from '@/stores/themecolor'
+
+// 主题颜色store
+const themeColorStore = useThemeColorStore()
 
 interface Props {
     text?: string
@@ -24,7 +28,7 @@ const props = withDefaults(defineProps<Props>(), {
     text: 'GradientText',
     fontSize: '36px',
     fontWeight: 'bold',
-    lineHeight: '80px',
+    lineHeight: '60px',
     left: '20px',
     marginLeft: '20px',
     gradientColors: '', // 空字符串表示使用默认颜色
@@ -32,12 +36,17 @@ const props = withDefaults(defineProps<Props>(), {
     tag: 'span'
 })
 
+// 计算样式 - 使用CSS变量
 const textStyle = computed(() => {
     const baseStyle: Record<string, string> = {
         fontSize: typeof props.fontSize === 'number' ? `${props.fontSize}px` : props.fontSize,
         fontWeight: String(props.fontWeight),
         lineHeight: typeof props.lineHeight === 'number' ? `${props.lineHeight}px` : props.lineHeight,
-        position: props.position
+        position: props.position,
+        '--color-green-lightGrey': themeColorStore.lightGrey1,
+        '--color-cyan-lightGrey': themeColorStore.lightGrey2,
+        '--color-green-darkGrey': themeColorStore.darkGrey1,
+        '--color-cyan-darkGrey': themeColorStore.darkGrey2
     }
     
     // 只有 position 为 absolute 时才设置 left 和 marginLeft

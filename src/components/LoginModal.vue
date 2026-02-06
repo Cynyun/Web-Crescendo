@@ -2,7 +2,7 @@
 <template>
     <div class="logintable">
         <el-dialog v-model="dialogVisible" title="用户登录" width="400px" :close-on-click-modal="false" @close="resetForm"
-            class="login-dialog">
+            class="login-dialog" :style="dialogStyle">
             <el-form ref="formRef" :model="form" :rules="rules" label-width="80px" size="default">
                 <!-- 合并为一个字段：支持昵称或邮箱 -->
                 <el-form-item label="账号" prop="loginId">
@@ -30,6 +30,7 @@
 import { ref, reactive } from 'vue'
 import type { FormInstance } from 'element-plus'
 import { useUserStore } from '@/stores/user'
+import { useThemeColorStore } from '@/stores/themecolor'
 import { ElMessage } from 'element-plus'
 import NewButton from '@/components/Button.vue' // 引入自定义按钮组件
 import { computed } from 'vue'
@@ -37,6 +38,15 @@ import { computed } from 'vue'
 // Props & Emit
 const props = defineProps<{ visible: boolean }>()
 const emit = defineEmits<{ (e: 'update:visible', value: boolean): void }>()
+
+// 主题颜色store
+const themeColorStore = useThemeColorStore()
+
+// 计算样式 - 使用CSS变量
+const dialogStyle = computed(() => ({
+  '--color-green-default': themeColorStore.default1,
+  '--color-cyan-default': themeColorStore.default2
+}))
 
 const dialogVisible = computed({
     get() {

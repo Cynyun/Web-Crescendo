@@ -2,7 +2,7 @@
 <template>
     <div class="registertable">
         <el-dialog v-model="visible" title="用户注册" width="500px" :close-on-click-modal="false" @close="resetForm"
-            class="register-dialog">
+            class="register-dialog" :style="dialogStyle">
             <el-form ref="formRef" :model="form" :rules="rules" label-width="80px" size="default">
                 <el-form-item label="用户名" prop="nickname">
                     <el-input v-model="form.nickname" placeholder="请输入用户名" />
@@ -34,11 +34,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import type { FormInstance } from 'element-plus'
 import { useUserStore } from '@/stores/user'
+import { useThemeColorStore } from '@/stores/themecolor'
 import { ElMessage } from 'element-plus'
 import NewButton from '@/components/Button.vue'
+
+// 主题颜色store
+const themeColorStore = useThemeColorStore()
+
+// 计算样式 - 使用CSS变量
+const dialogStyle = computed(() => ({
+  '--color-green-default': themeColorStore.default1,
+  '--color-cyan-default': themeColorStore.default2
+}))
+
 // 表单引用
 const formRef = ref<FormInstance>()
 

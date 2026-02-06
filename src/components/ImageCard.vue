@@ -1,33 +1,8 @@
 <template>
     <!-- From Uiverse.io by kennyotsu -->
-    <div class="container noselect">
+    <div class="container noselect" @mousemove="handleMouseMove" @mouseleave="handleMouseLeave">
         <div class="canvas">
-            <div class="tracker tr-1"></div>
-            <div class="tracker tr-2"></div>
-            <div class="tracker tr-3"></div>
-            <div class="tracker tr-4"></div>
-            <div class="tracker tr-5"></div>
-            <div class="tracker tr-6"></div>
-            <div class="tracker tr-7"></div>
-            <div class="tracker tr-8"></div>
-            <div class="tracker tr-9"></div>
-            <div class="tracker tr-10"></div>
-            <div class="tracker tr-11"></div>
-            <div class="tracker tr-12"></div>
-            <div class="tracker tr-13"></div>
-            <div class="tracker tr-14"></div>
-            <div class="tracker tr-15"></div>
-            <div class="tracker tr-16"></div>
-            <div class="tracker tr-17"></div>
-            <div class="tracker tr-18"></div>
-            <div class="tracker tr-19"></div>
-            <div class="tracker tr-20"></div>
-            <div class="tracker tr-21"></div>
-            <div class="tracker tr-22"></div>
-            <div class="tracker tr-23"></div>
-            <div class="tracker tr-24"></div>
-            <div class="tracker tr-25"></div>
-            <div id="card">
+            <div id="card" :style="cardStyle">
                 <p id="prompt">{{ props.prompt }}</p>
                 <div class="title">{{ props.title }}</div>
                 <img :src="props.imageUrl" mode="scaleToFill" />
@@ -38,7 +13,37 @@
 </template>
 
 <script setup lang="ts">
-import router from '@/router';
+import { computed, ref } from 'vue'
+import { useThemeColorStore } from '@/stores/themecolor'
+
+// 主题颜色store
+const themeColorStore = useThemeColorStore()
+
+// 鼠标位置
+const mouseX = ref(0.5) // 初始值设为0.5，确保卡片摆正
+const mouseY = ref(0.5) // 初始值设为0.5，确保卡片摆正
+
+// 计算样式 - 使用CSS变量
+const cardStyle = computed(() => {
+    // 使用正弦函数计算旋转角度，使得边缘处的变化逐渐变小
+    // 正弦函数在接近1和-1时导数趋近于0，实现边缘处变化平缓的效果
+    const maxAngle = 25; // 最大旋转角度
+
+    // 计算标准化的鼠标位置 (-1 到 1)
+    const normalizedX = (mouseX.value - 0.5) * 2;
+    const normalizedY = (mouseY.value - 0.5) * 2;
+
+    // 使用正弦函数计算旋转角度
+    const rotateX = -Math.sin(normalizedY * Math.PI / 2) * maxAngle;
+    const rotateY = Math.sin(normalizedX * Math.PI / 2) * maxAngle;
+
+    return {
+        '--color-green-defaultGrey': themeColorStore.defaultGrey1,
+        '--color-cyan-defaultGrey': themeColorStore.defaultGrey2,
+        transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(0deg)`,
+        transition: '125ms ease-in-out'
+    }
+})
 
 interface Props {
     prompt?: string
@@ -50,6 +55,27 @@ const props = withDefaults(defineProps<Props>(), {
     prompt: 'HOVER OVER :D',
     title: 'image'
 })
+
+// 处理鼠标移动事件
+const handleMouseMove = (event: MouseEvent) => {
+    const container = event.currentTarget as HTMLElement
+    const rect = container.getBoundingClientRect()
+
+    // 计算鼠标在容器内的相对位置 (0 到 1)
+    let x = (event.clientX - rect.left) / rect.width
+    let y = (event.clientY - rect.top) / rect.height
+
+    // 将相对位置限制在0.1到0.9的范围内，避免边缘处角度变化过于极端
+    mouseX.value = Math.max(0.1, Math.min(0.9, x))
+    mouseY.value = Math.max(0.1, Math.min(0.9, y))
+}
+
+// 处理鼠标离开事件
+const handleMouseLeave = () => {
+    // 重置鼠标位置，使卡片回到初始状态
+    mouseX.value = 0.5
+    mouseY.value = 0.5
+}
 </script>
 
 <style scoped lang="scss">
@@ -58,6 +84,10 @@ const props = withDefaults(defineProps<Props>(), {
     width: 100%;
     height: 100%;
     transition: 200ms;
+    cursor: pointer;
+    padding: 28px;
+    /* 添加内边距，为旋转时的卡片提供额外空间 */
+    box-sizing: border-box;
 }
 
 .container:active {
@@ -67,7 +97,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 #card {
     position: absolute;
-    inset: 0;
+    inset: 28px;
+    /* 与容器内边距匹配 */
     z-index: 0;
     display: flex;
     justify-content: center;
@@ -77,13 +108,20 @@ const props = withDefaults(defineProps<Props>(), {
     transition: 700ms;
     background: linear-gradient(43deg, var(--color-green-defaultGrey) 0%, var(--color-cyan-defaultGrey) 100%);
     overflow: hidden; // 裁剪子组件超出的部分
+    /* 设置旋转原点为卡片中心 */
+    transform-origin: center center;
+    /* 初始透明度，使卡片背景部分透明 */
+    opacity: 0.8;
+    transition: all 0.3s ease;
 
     // 添加的图片
     img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        opacity: 0.8;
+        opacity: 0.85;
+        /* 初始透明度，使图片几乎完全透明 */
+        transition: opacity 0.3s ease;
     }
 }
 
@@ -103,11 +141,6 @@ const props = withDefaults(defineProps<Props>(), {
     font-size: x-large;
     font-weight: bold;
     color: white;
-}
-
-.tracker:hover~#card .title,
-.tracker:hover~#card img {
-    opacity: 1;
     transition: opacity 0.3s ease;
 }
 
@@ -121,26 +154,25 @@ const props = withDefaults(defineProps<Props>(), {
     position: absolute;
     max-width: 110px;
     color: rgb(255, 255, 255);
+    opacity: 1;
+    transition: opacity 0.3s ease;
 }
 
-.tracker {
-    position: absolute;
-    z-index: 200;
-    width: 100%;
-    height: 100%;
-}
-
-.tracker:hover {
-    cursor: pointer;
-}
-
-.tracker:hover~#card #prompt {
-    opacity: 0;
-}
-
-.tracker:hover~#card {
+.container:hover #card {
     transition: 300ms;
     filter: brightness(1.1);
+    opacity: 1;
+    /* 鼠标悬停时卡片完全不透明 */
+}
+
+.container:hover #card .title,
+.container:hover #card img {
+    opacity: 1;
+    /* 鼠标悬停时图片完全不透明 */
+}
+
+.container:hover #card #prompt {
+    opacity: 0;
 }
 
 .container:hover #card::before {
@@ -154,15 +186,8 @@ const props = withDefaults(defineProps<Props>(), {
     inset: 0;
     z-index: 200;
     position: absolute;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
-    gap: 0px 0px;
-    grid-template-areas: "tr-1 tr-2 tr-3 tr-4 tr-5"
-        "tr-6 tr-7 tr-8 tr-9 tr-10"
-        "tr-11 tr-12 tr-13 tr-14 tr-15"
-        "tr-16 tr-17 tr-18 tr-19 tr-20"
-        "tr-21 tr-22 tr-23 tr-24 tr-25";
+    overflow: visible;
+    /* 确保卡片旋转时不会被裁剪 */
 }
 
 #card::before {
@@ -175,231 +200,6 @@ const props = withDefaults(defineProps<Props>(), {
     position: absolute;
     z-index: -1;
     transition: 200ms;
-}
-
-.tr-1 {
-    grid-area: tr-1;
-}
-
-.tr-2 {
-    grid-area: tr-2;
-}
-
-.tr-3 {
-    grid-area: tr-3;
-}
-
-.tr-4 {
-    grid-area: tr-4;
-}
-
-.tr-5 {
-    grid-area: tr-5;
-}
-
-.tr-6 {
-    grid-area: tr-6;
-}
-
-.tr-7 {
-    grid-area: tr-7;
-}
-
-.tr-8 {
-    grid-area: tr-8;
-}
-
-.tr-9 {
-    grid-area: tr-9;
-}
-
-.tr-10 {
-    grid-area: tr-10;
-}
-
-.tr-11 {
-    grid-area: tr-11;
-}
-
-.tr-12 {
-    grid-area: tr-12;
-}
-
-.tr-13 {
-    grid-area: tr-13;
-}
-
-.tr-14 {
-    grid-area: tr-14;
-}
-
-.tr-15 {
-    grid-area: tr-15;
-}
-
-.tr-16 {
-    grid-area: tr-16;
-}
-
-.tr-17 {
-    grid-area: tr-17;
-}
-
-.tr-18 {
-    grid-area: tr-18;
-}
-
-.tr-19 {
-    grid-area: tr-19;
-}
-
-.tr-20 {
-    grid-area: tr-20;
-}
-
-.tr-21 {
-    grid-area: tr-21;
-}
-
-.tr-22 {
-    grid-area: tr-22;
-}
-
-.tr-23 {
-    grid-area: tr-23;
-}
-
-.tr-24 {
-    grid-area: tr-24;
-}
-
-.tr-25 {
-    grid-area: tr-25;
-}
-
-.tr-1:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(20deg) rotateY(-10deg) rotateZ(0deg);
-}
-
-.tr-2:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(20deg) rotateY(-5deg) rotateZ(0deg);
-}
-
-.tr-3:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(20deg) rotateY(0deg) rotateZ(0deg);
-}
-
-.tr-4:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(20deg) rotateY(5deg) rotateZ(0deg);
-}
-
-.tr-5:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(20deg) rotateY(10deg) rotateZ(0deg);
-}
-
-.tr-6:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(10deg) rotateY(-10deg) rotateZ(0deg);
-}
-
-.tr-7:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(10deg) rotateY(-5deg) rotateZ(0deg);
-}
-
-.tr-8:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(10deg) rotateY(0deg) rotateZ(0deg);
-}
-
-.tr-9:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(10deg) rotateY(5deg) rotateZ(0deg);
-}
-
-.tr-10:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(10deg) rotateY(10deg) rotateZ(0deg);
-}
-
-.tr-11:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(0deg) rotateY(-10deg) rotateZ(0deg);
-}
-
-.tr-12:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(0deg) rotateY(-5deg) rotateZ(0deg);
-}
-
-.tr-13:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-}
-
-.tr-14:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(0deg) rotateY(5deg) rotateZ(0deg);
-}
-
-.tr-15:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(0deg) rotateY(10deg) rotateZ(0deg);
-}
-
-.tr-16:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(-10deg) rotateY(-10deg) rotateZ(0deg);
-}
-
-.tr-17:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(-10deg) rotateY(-5deg) rotateZ(0deg);
-}
-
-.tr-18:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(-10deg) rotateY(0deg) rotateZ(0deg);
-}
-
-.tr-19:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(-10deg) rotateY(5deg) rotateZ(0deg);
-}
-
-.tr-20:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(-10deg) rotateY(10deg) rotateZ(0deg);
-}
-
-.tr-21:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(-20deg) rotateY(-10deg) rotateZ(0deg);
-}
-
-.tr-22:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(-20deg) rotateY(-5deg) rotateZ(0deg);
-}
-
-.tr-23:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(-20deg) rotateY(0deg) rotateZ(0deg);
-}
-
-.tr-24:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(-20deg) rotateY(5deg) rotateZ(0deg);
-}
-
-.tr-25:hover~#card {
-    transition: 125ms ease-in-out;
-    transform: rotateX(-20deg) rotateY(10deg) rotateZ(0deg);
 }
 
 .noselect {

@@ -1,35 +1,48 @@
 <template>
-    <div class="container">
-        <div class="nav">
-            <GradientText text="Web Crescendo" />
-            <div class="designed">
-                <!-- 已登录：显示用户名 + 退出按钮 -->
-                <div v-if="userStore.isLoggedIn" class="user-info">
-                    <p style="color: white; white-space: nowrap;">欢迎，{{ userName }}</p>
-                    <NewButton type="danger" size="small" @click="handleLogout" style="margin-left: 10px">
-                        退出
-                    </NewButton>
-                </div>
-
-                <!-- 未登录：显示注册（和/或登录）按钮 -->
-                <div v-else class="auth-buttons">
-                    <NewButton type="primary" size="small" @click="showRegister = true">注册</NewButton>
-                    <NewButton size="small" @click="showLogin = true">登录</NewButton>
-                </div>
-                <!-- 注册弹窗 -->
-                <RegisterModal v-model:visible="showRegister" />
-                <!-- 登录弹窗 -->
-                <LoginModal v-model:visible="showLogin" />
-            </div>
-        </div>
+    <div class="container" :style="themeStyle">
+        <Nav v-model:isAlwaysHighlighted="isAlwaysHighlighted" />
+        <!-- 左侧内容显示控制按钮 -->
+        <NewButton v-if="isLeftHidden" class="left-toggle-btn" @click="controllerLeft">
+            <span class="icon iconfont" style="font-size: 26px;">&#xe6ce;</span>
+        </NewButton>
+        <!-- 右侧内容显示控制按钮 -->
+        <NewButton v-if="isRightHidden" class="right-toggle-btn" @click="controllerRight">
+            <span class="icon iconfont" style="font-size: 26px;">&#xe6c0;</span>
+        </NewButton>
         <div class="table">
-            <div class="left"></div>
-            <div class="mid">
-                <button class="btnstyle" @click="handleClick">
-                    <ImageCard prompt="永劫无间" title="" :imageUrl="imageurl1" class="card" />
-                </button>
+            <div class="left" :class="{ 'hidden': isLeftHidden }">
+                <div class="left-content">
+                    <div class="settings">
+                        <NewButton class="settings-icon">
+                            <span class="icon iconfont" style="font-size: 26px;">&#xe6b3;</span>
+                        </NewButton>
+                        <NewButton class="show-left-content" @click="controllerLeft">
+                            <span class="icon iconfont" style="font-size: 26px;">&#xe6c0;</span>
+                        </NewButton>
+                    </div>
+                </div>
             </div>
-            <div class="right"></div>
+            <div class="mid">
+                <!-- 上面部分：占满width，高度为1.5 -->
+                <div class="top-section">
+                    <TimeDisplay />
+                </div>
+                <!-- 下面部分：width占满，分为3列2行，高度为1 -->
+                <div class="bottom-section">
+                    <div class="bottom-section-item" v-for="i in [0, 1, 2, 3, 4, 5]" @click="handleClick(i)">
+                        <ImageCard :prompt="images[i]!.prompt" title="" :imageUrl="images[i]!.imgurl" class="card" />
+                    </div>
+                </div>
+            </div>
+            <div class="right" :class="{ 'hidden': isRightHidden }">
+                <div class="right-content">
+                    <div class="right-head">
+                        <NewButton class="show-right-content" @click="controllerRight">
+                            <span class="icon iconfont" style="font-size: 26px;">&#xe6ce;</span>
+                        </NewButton>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="footer"></div>
     </div>
@@ -38,52 +51,62 @@
 <script setup lang="ts">
 import { getImageSrc } from '@/config';
 import router from '@/router';
-import { useUserStore } from '@/stores/user';
-import RegisterModal from '@/components/RegisterModal.vue';
-import LoginModal from '@/components/LoginModal.vue';
-import GradientText from '@/components/GradientText.vue';
 import { ref, computed } from 'vue';
-import { ElMessage } from 'element-plus'
-import NewButton from '@/components/Button.vue'
+import Nav from '@/components/Nav.vue';
+import { useThemeColorStore } from '@/stores/themecolor'
+import NewButton from '@/components/Button.vue';
+import ImageCard from '@/components/ImageCard.vue';
+import TimeDisplay from '@/components/TimeDisplay.vue';
 
-// 用户数据
-const userStore = useUserStore()
+// 主题颜色store
+const themeColorStore = useThemeColorStore()
 
-// 确保响应式的用户名
-const userName = computed(() => {
-    const info = userStore.userInfo
-    // 兼容处理：如果 nickname 不存在，尝试使用 name（旧数据兼容）
-    return info?.nickname || (info as any)?.name || ''
-})
+//是否开启常显高亮
+const isAlwaysHighlighted = ref(false)
 
-// 显示注册组件
-const showRegister = ref(false)
+// 是否隐藏左侧
+const isLeftHidden = ref(false)
 
-// 显示登入组件
-const showLogin = ref(false)
+// 是否隐藏右侧
+const isRightHidden = ref(false)
 
 // 背景图片
-const imageurl1 = getImageSrc('backgroundImage1.webp')
+// const imageurl1 = getImageSrc('backgroundImage1.webp')
+
+// 临时图片
+const images = [
+    { imgurl: getImageSrc('YJimages/background_default.wepg'), url: '/yjwjgame/YJFrameWork', prompt: 'p1', title: '图片1' },
+    { imgurl: getImageSrc('Timages/backgroundImage2.png'), url: '', prompt: 'p2', title: '图片2' },
+    { imgurl: getImageSrc('Timages/backgroundImage3.png'), url: '', prompt: 'p3', title: '图片3' },
+    { imgurl: getImageSrc('Timages/backgroundImage4.png'), url: '', prompt: 'p4', title: '图片4' },
+    { imgurl: getImageSrc('Timages/backgroundImage5.png'), url: '', prompt: 'p5', title: '图片5' },
+    { imgurl: getImageSrc('Timages/backgroundImage6.png'), prompt: 'p6', title: '图片6' },
+]
+
+const themeStyle = computed(() => {
+    const baseThemeStyle: Record<string, string> = {
+        '--light1': themeColorStore.default1,
+        '--light2': themeColorStore.default2,
+        '--lightGrey2': themeColorStore.lightGrey2,
+    }
+    return baseThemeStyle;
+})
 
 // 页面跳转
-const handleClick = () => {
-    router.push('FrameWork')
+const handleClick = (index: number) => {
+    if (images[index]!.url) {
+        router.push(images[index]!.url)
+    }
 }
 
-// 退出登录
-const isLoggingOut = ref(false) // 防止重复点击
-const handleLogout = () => {
-    // 防止重复点击
-    if (isLoggingOut.value) return
-    isLoggingOut.value = true
-    
-    userStore.clearUserInfo()
-    ElMessage.info('已退出登录')
-    
-    // 重置标志，允许下次退出
-    setTimeout(() => {
-        isLoggingOut.value = false
-    }, 1000)
+// 控制左侧显示
+const controllerLeft = () => {
+    isLeftHidden.value = !isLeftHidden.value
+}
+
+// 控制右侧显示
+const controllerRight = () => {
+    isRightHidden.value = !isRightHidden.value
 }
 </script>
 
@@ -91,114 +114,293 @@ const handleLogout = () => {
 .container {
     width: 100%;
     height: 100vh;
-    // background-image: url('../../public/Images/background_default.png');
+    background-image: url('../../Images/TImages/backgroundImage14.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-}
-
-.nav {
-    width: 100%;
-    height: 80px;
-    background: linear-gradient(90deg, var(--color-green-defaultGrey), var(--color-cyan-defaultGrey));
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-
-    .designed {
-        min-width: 200px;
-        height: 80px;
-        position: absolute;
-        right: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: none;
-        gap: 8px;
-
-        .user-info {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .auth-buttons {
-            display: flex;
-            align-items: center;
-            justify-items: center;
-            gap: 10px;
-        }
-    }
-}
-
-.nav:hover {
-    background: linear-gradient(90deg, var(--color-green-default), var(--color-cyan-default));
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-
-    :deep(.gradient-text) {
-        background: linear-gradient(90deg,
-                var(--color-green-darkGrey),
-                var(--color-cyan-darkGrey),
-                var(--color-green-darkGrey),
-                var(--color-cyan-darkGrey));
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        background-size: 300% 100%;
-        animation: gradient-text-ani 2s infinite linear;
-    }
 }
 
 .table {
     box-sizing: border-box;
+    flex: 1;
     width: 100%;
     max-width: 100vw;
     overflow-x: hidden;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    display: grid;
-    grid-template-columns: minmax(100px, 3fr) minmax(200px, 8fr) minmax(100px, 3fr);
+    margin-top: 0px;
+    margin-bottom: 0px;
+    display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+
+    .left,
+    .right {
+        margin: 3px;
+        height: calc(100% - 6px);
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+        position: relative;
+        background-color: transparent;
+        border-radius: 10px;
+    }
+
+    .left {
+        // flex 0 0 宽度
+        flex: 0 0 200px;
+        transform: translateX(0);
+        background: linear-gradient(60deg, var(--light1), var(--light2));
+    }
+
+    .right {
+        // flex 0 0 宽度
+        flex: 0 0 200px;
+        transform: translateX(0);
+        background: linear-gradient(300deg, var(--light1), var(--light2));
+    }
 
     .mid {
-        display: flex;
-        width: 100%;
+        flex: 1;
+        height: calc(100% - 10px);
+        min-width: 200px;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 0.35fr 1fr;
+        gap: 16px;
+        margin-bottom: 5px;
 
-        button {
-            margin: 50px 0;
+        .top-section {
             width: 100%;
-            height: 500px;
-            border: none;
-            background-color: rgba(255, 255, 255, 0);
+            height: 100%;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-            .card {
+            margin-top: 3px;
+
+            // background-color: aqua;
+        }
+
+        .bottom-section {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 10px;
+
+            margin-bottom: 3px;
+
+            .bottom-section-item {
                 width: 100%;
-                height: 500px;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+
+                .card {
+                    width: 100%;
+                    height: 100%;
+                    overflow: hidden;
+                }
             }
         }
     }
 
-    .left,
-    .right {
-        min-width: 100px;
+    .left-content,
+    .right-content {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .left {
-        position: relative;
+    .left-content {
+        left: 0;
 
-        .test {
-            width: 200px;
-            height: 150px;
-            position: absolute;
-            top: 10px;
-            left: 50px;
+        .settings {
+            width: 100%;
+            height: 35px;
+            background-color: var(--lightGrey2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .settings-icon {
+                width: 78%;
+                height: 31px;
+                line-height: 31px;
+                text-align: center;
+                font-size: 26px;
+                color: var(--darkGrey1);
+                cursor: pointer;
+            }
+
+            .show-left-content {
+                width: 31px;
+                height: 31px;
+                line-height: 31px;
+                text-align: center;
+                font-size: 26px;
+                color: var(--darkGrey1);
+                cursor: pointer;
+            }
+        }
+    }
+
+    .right-content {
+        right: 0;
+
+        .right-head {
+            width: 100%;
+            height: 35px;
+            background-color: var(--lightGrey2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .show-right-content {
+                width: 98%;
+                height: 31px;
+                line-height: 31px;
+                text-align: center;
+                font-size: 26px;
+                color: var(--darkGrey1);
+                cursor: pointer;
+            }
         }
     }
 }
 
-// .footer {}</style>
+/* 当左右两侧隐藏时，中间部分占据全部宽度 */
+.table.collapsed {
+    .left {
+        flex: 0 0 0;
+        transform: translateX(-100%);
+    }
+
+    .right {
+        flex: 0 0 0;
+        transform: translateX(100%);
+    }
+
+    .mid {
+        flex: 1 1 100%;
+        padding: 0 20px;
+    }
+}
+
+/* 滑动隐藏动画效果 */
+.table.sliding {
+
+    .left,
+    .right {
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mid {
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+}
+
+/* 左侧隐藏样式 */
+.table .left.hidden {
+    flex: 0 0 0;
+    transform: translateX(-100%);
+}
+
+/* 右侧隐藏样式 */
+.table .right.hidden {
+    flex: 0 0 0;
+    transform: translateX(100%);
+}
+
+/* 当左右侧都隐藏时，中间部分占据全部宽度 */
+.table:has(.left.hidden):has(.right.hidden) .mid {
+    flex: 1 1 100%;
+    padding: 0 40px;
+}
+
+/* 当只有左侧隐藏时，中间部分占据更多宽度 */
+.table:has(.left.hidden):not(:has(.right.hidden)) .mid {
+    flex: 2;
+}
+
+/* 当只有右侧隐藏时，中间部分占据更多宽度 */
+.table:has(.right.hidden):not(:has(.left.hidden)) .mid {
+    flex: 2;
+}
+
+/* 左侧内容显示控制按钮样式 */
+.left-toggle-btn {
+    position: fixed;
+    left: 0;
+    top: 63px;
+    z-index: 10;
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 0 10px 10px 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: linear-gradient(60deg, var(--light1), var(--light2));
+        transform: translateX(3px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        color: var(--darkGrey1);
+    }
+
+    .icon {
+        color: var(--darkGrey1);
+        font-size: 26px;
+    }
+}
+
+/* 右侧内容显示控制按钮样式 */
+.right-toggle-btn {
+    position: fixed;
+    right: 0;
+    top: 63px;
+    z-index: 10;
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 10px 0 0 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: linear-gradient(300deg, var(--light1), var(--light2));
+        transform: translateX(-3px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        color: var(--darkGrey1);
+    }
+
+    .icon {
+        color: var(--darkGrey1);
+        font-size: 26px;
+    }
+}
+
+.footer {
+    width: 100%;
+    // height: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+</style>

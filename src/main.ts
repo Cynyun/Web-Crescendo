@@ -1,9 +1,6 @@
-import { COLORS, registerColorCssVariables } from './config' // 基本属性
-registerColorCssVariables(COLORS)
-
 import './assets/base.css'
 
-import getImageSrc from './config' // 图片
+import getImageSrc, { getColorsFromStore, registerColorCssVariables } from './config' // 图片和颜色
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
@@ -31,10 +28,25 @@ if (!customElements.get('swiper-container')) {
 
 const app = createApp(App)
 
-app.use(createPinia())
+const pinia = createPinia()
+// 将pinia实例存储到window对象上
+;(window as any).pinia = pinia
+app.use(pinia)
 app.use(router)
 app.use(getImageSrc)
 app.use(element)
+
+// 初始化颜色配置
+async function initColors() {
+  try {
+    const colors = await getColorsFromStore()
+    registerColorCssVariables(colors)
+  } catch (error) {
+    console.error('初始化颜色配置失败:', error)
+  }
+}
+
+initColors()
 
 app.component('SlideShow', SlideShow)
 app.component('ImageCard', ImageCard)

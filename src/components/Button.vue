@@ -1,7 +1,7 @@
 <!-- src/components/GradientButton.vue -->
 <template>
     <button class="gradient-button" :class="{ 'gradient-button--disabled': disabled || loading }"
-        :disabled="disabled || loading" @click="handleClick">
+        :disabled="disabled || loading" @click="handleClick" :style="buttonStyle">
         <span>
             <slot>{{ loading ? '加载中...' : '按钮' }}</slot>
         </span>
@@ -9,6 +9,12 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useThemeColorStore } from '@/stores/themecolor'
+
+// 主题颜色store
+const themeColorStore = useThemeColorStore()
+
 // 定义 props
 const props = defineProps<{
     disabled?: boolean
@@ -21,6 +27,16 @@ const emit = defineEmits<{
     (e: 'click', event: MouseEvent): void
 }>()
 
+// 计算样式 - 使用CSS变量
+const buttonStyle = computed(() => ({
+    '--color-green-defaultGrey': themeColorStore.defaultGrey1,
+    '--color-cyan-defaultGrey': themeColorStore.defaultGrey2,
+    '--color-green-lightGrey': themeColorStore.lightGrey1,
+    '--color-cyan-lightGrey': themeColorStore.lightGrey2,
+    '--color-green-darkGrey': themeColorStore.darkGrey1,
+    '--color-cyan-darkGrey': themeColorStore.darkGrey2
+}))
+
 // 点击处理函数
 const handleClick = (event: MouseEvent) => {
     // 正确方式：直接使用 props，不用 this
@@ -28,9 +44,9 @@ const handleClick = (event: MouseEvent) => {
     // 标准 Vue 事件
     emit('click', event)
     // onClick 回调
-    if (props.onClick) {
-        props.onClick(event)
-    }
+    // if (props.onClick) {
+    //     props.onClick(event)
+    // }
 }
 </script>
 
@@ -42,7 +58,6 @@ const handleClick = (event: MouseEvent) => {
     border-radius: 8px;
     box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
     box-sizing: border-box;
-    /* color: rgb(220, 220, 220); */
 
     background: linear-gradient(90deg, var(--color-green-lightGrey), var(--color-cyan-lightGrey));
     -webkit-background-clip: text;
@@ -54,8 +69,8 @@ const handleClick = (event: MouseEvent) => {
     justify-content: center;
     line-height: 16px;
     max-width: 100%;
-    min-width: 50px;
-    min-height: 36px;
+    min-width: 10px;
+    min-height: 10px;
     width: 80px;
     height: 36px;
     padding: 3px;
