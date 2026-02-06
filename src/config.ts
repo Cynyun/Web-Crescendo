@@ -104,7 +104,7 @@ export function registerColorCssVariables(colors: typeof COLORS) {
 
 // 图片函数
 export const getImageSrc = (path: string): string => {
-  return `Images/${path}`;
+  return `public/Images/${path}`;
 };
 
 export default {
