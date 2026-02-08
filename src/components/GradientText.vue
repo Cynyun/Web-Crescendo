@@ -1,6 +1,6 @@
 <!-- src/components/GradientText.vue -->
 <template>
-    <component :is="tag" class="gradient-text" :style="textStyle">
+    <component :is="tag" :class="['gradient-text', { 'gradient-text--animated': animated }]" :style="textStyle">
         {{ text }}
     </component>
 </template>
@@ -22,6 +22,7 @@ interface Props {
     gradientColors?: string // 自定义渐变颜色，格式: "color1, color2" 或 "color1, color2, color3, color4"
     position?: 'absolute' | 'relative' | 'static' // 定位方式
     tag?: string // 使用的 HTML 标签，默认 span
+    animated?: boolean // 是否启用动画效果
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -33,7 +34,8 @@ const props = withDefaults(defineProps<Props>(), {
     marginLeft: '20px',
     gradientColors: '', // 空字符串表示使用默认颜色
     position: 'absolute',
-    tag: 'span'
+    tag: 'span',
+    animated: false // 默认不启用动画
 })
 
 // 计算样式 - 使用CSS变量
@@ -43,24 +45,24 @@ const textStyle = computed(() => {
         fontWeight: String(props.fontWeight),
         lineHeight: typeof props.lineHeight === 'number' ? `${props.lineHeight}px` : props.lineHeight,
         position: props.position,
-        '--color-green-lightGrey': themeColorStore.lightGrey1,
-        '--color-cyan-lightGrey': themeColorStore.lightGrey2,
-        '--color-green-darkGrey': themeColorStore.darkGrey1,
-        '--color-cyan-darkGrey': themeColorStore.darkGrey2
+        '--lightGrey1': themeColorStore.lightGrey1,
+        '--lightGrey2': themeColorStore.lightGrey2,
+        '--darkGrey1': themeColorStore.darkGrey1,
+        '--darkGrey2': themeColorStore.darkGrey2
     }
-    
+
     // 只有 position 为 absolute 时才设置 left 和 marginLeft
     if (props.position === 'absolute') {
         baseStyle.left = props.left
         baseStyle.marginLeft = props.marginLeft
     }
-    
+
     // 如果提供了自定义渐变颜色
     if (props.gradientColors) {
         const colors = props.gradientColors.split(',').map(c => c.trim())
         baseStyle.background = `linear-gradient(90deg, ${colors.join(', ')})`
     }
-    
+
     return baseStyle
 })
 </script>
@@ -68,7 +70,7 @@ const textStyle = computed(() => {
 <style scoped lang="scss">
 .gradient-text {
     // 默认颜色，如果没有通过内联样式设置 background，则使用这个
-    background: linear-gradient(90deg, var(--color-green-lightGrey), var(--color-cyan-lightGrey));
+    background: linear-gradient(90deg, var(--lightGrey1), var(--lightGrey2));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -78,10 +80,10 @@ const textStyle = computed(() => {
 
 .gradient-text--animated {
     background: linear-gradient(90deg,
-            var(--color-green-darkGrey),
-            var(--color-cyan-darkGrey),
-            var(--color-green-darkGrey),
-            var(--color-cyan-darkGrey));
+            var(--darkGrey1),
+            var(--darkGrey2),
+            var(--darkGrey1),
+            var(--darkGrey2));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -102,4 +104,3 @@ const textStyle = computed(() => {
     }
 }
 </style>
-

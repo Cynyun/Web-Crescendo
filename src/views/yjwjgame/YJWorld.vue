@@ -3,9 +3,9 @@
         <div class="header">
             <div class="nav-tabs">
                 <div class="backarrow">
-                    <button class="backbtn" :style="{ backgroundImage: `url(${getImageSrc('backbtn.png')})` }"
+                    <button class="backbtn" :style="{ backgroundImage: `url(${getImageSrc('YJImages/backbtn.png')})` }"
                         @click="clickBack">
-                        <img :src="getImageSrc('barrow.png')" alt="">
+                        <img :src="getImageSrc('YJImages/barrow.png')" alt="">
                     </button>
                 </div>
                 <div v-for="(data, index) in datas" :key="index" class="tab-container">
@@ -27,7 +27,7 @@
                 <img :src="currentbook" class="bookimg">
             </div>
             <div class="texts">
-                <img :src="getImageSrc('textheader.webp')">
+                <img :src="getImageSrc('YJImages/textheader.webp')">
                 <TextCard :contexts="currenttexts" title="" prompt="" class="textcard" />
             </div>
         </div>
@@ -41,7 +41,9 @@ import { useRouter } from 'vue-router'
 import datas from '../../utils/Datas'
 
 const router = useRouter()
-const bkUrl = ref(getImageSrc('/YJImages/bklydt.webp'))
+// const bkUrl = ref(getImageSrc('YJImages/bklydt.webp'))
+const bkUrl = ref('/Images/YJImages/bklydt.webp')
+console.log(bkUrl.value)
 const currenttype = ref(0)
 const currentypeindex = ref(0)
 const currenttexts = ref({})

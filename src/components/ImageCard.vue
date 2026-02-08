@@ -66,8 +66,8 @@ const handleMouseMove = (event: MouseEvent) => {
     let y = (event.clientY - rect.top) / rect.height
 
     // 将相对位置限制在0.1到0.9的范围内，避免边缘处角度变化过于极端
-    mouseX.value = Math.max(0.1, Math.min(0.9, x))
-    mouseY.value = Math.max(0.1, Math.min(0.9, y))
+    mouseX.value = Math.max(0.1, Math.min(0.7, x))
+    mouseY.value = Math.max(0.1, Math.min(0.7, y))
 }
 
 // 处理鼠标离开事件

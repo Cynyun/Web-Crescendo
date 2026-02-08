@@ -1,11 +1,12 @@
 <template>
     <div class="timeDisplay">
-        {{ currentTime }}
+        <GradientText :text="currentTime" fontSize="48px" position="relative" animated/>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import GradientText from './GradientText.vue'
 
 const currentTime = ref('00:00:00')
 let timer: ReturnType<typeof setInterval> | null = null
@@ -29,10 +30,9 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .timeDisplay {
-    font-size: 72px;
-    font-weight: bold;
-    color: white;
-    font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue',
-        Helvetica, Arial, sans-serif;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 </style>

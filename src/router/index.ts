@@ -7,21 +7,48 @@ const router = createRouter({
       path: '/',
       name: 'Base',
       component: () => import('../views/Base.vue'),
-    },
-    {
-      path: '/yjwjgame/YJFrameWork',
-      name: 'YJFrameWork',
-      component: () => import('../views/yjwjgame/YJFrameWork.vue'),
-    },
-    {
-      path: '/yjwjgame/YJWorld',
-      name: 'YJWorld',
-      component: () => import('../views/yjwjgame/YJWorld.vue'),
-    },
-    {
-      path: '/yjwjgame/YJPerson',
-      name: 'YJPerson',
-      component: () => import('../views/yjwjgame/YJPerson.vue'),
+      children: [
+        {
+          path: '',
+          name: 'Home',
+          component: () => import('../views/Home.vue'),
+        },
+        {
+          path: 'yjwjgame/YJFrameWork',
+          name: 'YJFrameWork',
+          component: () => import('../views/yjwjgame/YJFrameWork.vue'),
+        },
+        {
+          path: 'yjwjgame/YJWorld',
+          name: 'YJWorld',
+          component: () => import('../views/yjwjgame/YJWorld.vue'),
+        },
+        {
+          path: 'yjwjgame/YJPerson',
+          name: 'YJPerson',
+          component: () => import('../views/yjwjgame/YJPerson.vue'),
+        },
+        {
+          path: 'settings',
+          name: 'BaseSettings',
+          component: () => import('../views/BaseSettings.vue'),
+        },
+        {
+          path: 'test1',
+          name: 'Test1',
+          component: () => import('../views/Test1.vue'),
+        },
+        {
+          path: 'test2',
+          name: 'Test2',
+          component: () => import('../views/Test2.vue'),
+        },
+        {
+          path: 'test3',
+          name: 'Test3',
+          component: () => import('../views/Test3.vue'),
+        },
+      ],
     },
   ],
 })

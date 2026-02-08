@@ -1,6 +1,6 @@
 <template>
-    <NewButton size="small" class="controllerNavShow" @click="showNav = !showNav">{{ '' }}</NewButton>
-    <div v-if="showNav" class="nav" :class="{ 'nav-highlighted': isAlwaysHighlighted }" :style="navStyle">
+    <NewButton size="small" class="controllerNavShow" @click="handleToggleNav">{{ '' }}</NewButton>
+    <div class="nav" :class="{ 'nav-highlighted': isAlwaysHighlighted, 'nav-hidden': !showNav }" :style="navStyle">
         <NewButton size="small" @click="toggleHighlight" class="controllerHighlight">{{ '' }}</NewButton>
         <GradientText text="Web Crescendo" />
         <div class="designed">
@@ -45,6 +45,7 @@ const props = defineProps<{
 // Emits
 const emit = defineEmits<{
     (e: 'update:isAlwaysHighlighted', value: boolean): void;
+    (e: 'toggle-nav', isVisible: boolean): void;
 }>();
 
 // 是否开启常显高亮
@@ -56,6 +57,12 @@ const isAlwaysHighlighted = computed({
 // 切换高亮状态
 const toggleHighlight = () => {
     isAlwaysHighlighted.value = !isAlwaysHighlighted.value;
+};
+
+// 切换导航显示状态
+const handleToggleNav = () => {
+    showNav.value = !showNav.value;
+    emit('toggle-nav', showNav.value);
 };
 
 // 用户数据
@@ -76,12 +83,12 @@ const themeColorStore = useThemeColorStore();
 
 // 计算样式 - 使用CSS变量
 const navStyle = computed(() => ({
-    '--color-green-defaultGrey': themeColorStore.defaultGrey1,
-    '--color-cyan-defaultGrey': themeColorStore.defaultGrey2,
-    '--color-green-default': themeColorStore.default1,
-    '--color-cyan-default': themeColorStore.default2,
-    '--color-green-darkGrey': themeColorStore.darkGrey1,
-    '--color-cyan-darkGrey': themeColorStore.darkGrey2
+    '--defaultGrey1': themeColorStore.defaultGrey1,
+    '--defaultGrey2': themeColorStore.defaultGrey2,
+    '--default1': themeColorStore.default1,
+    '--default2': themeColorStore.default2,
+    '--darkGrey1': themeColorStore.darkGrey1,
+    '--darkGrey2': themeColorStore.darkGrey2
 }));
 
 // 显示注册组件
@@ -124,13 +131,17 @@ const handleLogout = () => {
 .nav {
     width: 100%;
     height: 60px;
-    background: linear-gradient(90deg, var(--color-green-defaultGrey), var(--color-cyan-defaultGrey));
+    background: linear-gradient(90deg, var(--defaultGrey1), var(--defaultGrey2));
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, height 0.3s ease-in-out;
+    transform: translateY(0);
+    opacity: 1;
+    overflow: hidden;
 
     .controllerHighlight {
         width: 20px;
@@ -168,21 +179,27 @@ const handleLogout = () => {
 
 .nav:hover,
 .nav-highlighted {
-    background: linear-gradient(90deg, var(--color-green-default), var(--color-cyan-default));
+    background: linear-gradient(90deg, var(--default1), var(--default2));
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
     :deep(.gradient-text) {
         background: linear-gradient(90deg,
-                var(--color-green-darkGrey),
-                var(--color-cyan-darkGrey),
-                var(--color-green-darkGrey),
-                var(--color-cyan-darkGrey));
+                var(--darkGrey1),
+                var(--darkGrey2),
+                var(--darkGrey1),
+                var(--darkGrey2));
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
         background-size: 300% 100%;
         animation: gradient-text-ani 2s infinite linear;
     }
+}
+
+.nav-hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+    height: 0;
 }
 
 @keyframes gradient-text-ani {

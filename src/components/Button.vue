@@ -29,12 +29,12 @@ const emit = defineEmits<{
 
 // 计算样式 - 使用CSS变量
 const buttonStyle = computed(() => ({
-    '--color-green-defaultGrey': themeColorStore.defaultGrey1,
-    '--color-cyan-defaultGrey': themeColorStore.defaultGrey2,
-    '--color-green-lightGrey': themeColorStore.lightGrey1,
-    '--color-cyan-lightGrey': themeColorStore.lightGrey2,
-    '--color-green-darkGrey': themeColorStore.darkGrey1,
-    '--color-cyan-darkGrey': themeColorStore.darkGrey2
+    '--defaultGrey1': themeColorStore.defaultGrey1,
+    '--defaultGrey2': themeColorStore.defaultGrey2,
+    '--lightGrey1': themeColorStore.lightGrey1,
+    '--lightGrey2': themeColorStore.lightGrey2,
+    '--darkGrey1': themeColorStore.darkGrey1,
+    '--darkGrey2': themeColorStore.darkGrey2
 }))
 
 // 点击处理函数
@@ -53,16 +53,16 @@ const handleClick = (event: MouseEvent) => {
 <style scoped>
 .gradient-button {
     align-items: center;
-    background-image: linear-gradient(90deg, var(--color-green-defaultGrey), var(--color-cyan-defaultGrey));
+    background-image: linear-gradient(90deg, var(--defaultGrey1), var(--defaultGrey2));
     border: 0;
     border-radius: 8px;
     box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
     box-sizing: border-box;
 
-    background: linear-gradient(90deg, var(--color-green-lightGrey), var(--color-cyan-lightGrey));
+    background: linear-gradient(90deg, var(--lightGrey1), var(--lightGrey2));
     -webkit-background-clip: text;
     background-clip: text;
-    color: transparent;
+    color: var(--defaultGrey1);
 
     display: flex;
     font-size: 16px;
@@ -86,10 +86,10 @@ const handleClick = (event: MouseEvent) => {
 .gradient-button:hover,
 .gradient-button:active {
     background: linear-gradient(90deg,
-            var(--color-green-darkGrey),
-            var(--color-cyan-darkGrey),
-            var(--color-green-darkGrey),
-            var(--color-cyan-darkGrey));
+            var(--darkGrey1),
+            var(--darkGrey2),
+            var(--darkGrey1),
+            var(--darkGrey2));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
