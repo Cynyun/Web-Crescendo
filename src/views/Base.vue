@@ -1,6 +1,7 @@
 <template>
     <div class="container" :style="themeStyle">
-        <Nav v-model:isAlwaysHighlighted="isAlwaysHighlighted" @toggle-nav="handleToggleNav" />
+        <Nav v-model:isAlwaysHighlighted="isAlwaysHighlighted" @toggle-nav="handleToggleNav"
+            @show-register="showRegister = true" @show-login="showLogin = true" />
         <!-- 左侧内容显示控制按钮 -->
         <NewButton v-if="isLeftHidden" class="left-toggle-btn" @click="controllerLeft">
             <span class="icon iconfont" style="font-size: 26px;">&#xe6ce;</span>
@@ -55,6 +56,10 @@
         </div>
     </div>
     <div class="footer"></div>
+    <!-- 注册弹窗 -->
+    <RegisterModal v-model:visible="showRegister" />
+    <!-- 登录弹窗 -->
+    <LoginModal v-model:visible="showLogin" />
 </template>
 
 <script setup lang="ts">
@@ -63,6 +68,8 @@ import Nav from '@/components/Nav.vue';
 import { useThemeColorStore } from '@/stores/themecolor'
 import NewButton from '@/components/Button.vue';
 import TreeMenu from '@/components/TreeMenu.vue';
+import RegisterModal from '@/components/RegisterModal.vue';
+import LoginModal from '@/components/LoginModal.vue';
 
 // 主题颜色store
 const themeColorStore = useThemeColorStore()
@@ -75,6 +82,12 @@ const isLeftHidden = ref(false)
 
 // 是否隐藏右侧
 const isRightHidden = ref(false)
+
+// 显示注册组件
+const showRegister = ref(false)
+
+// 显示登入组件
+const showLogin = ref(false)
 
 // left-footer数据
 const footerItems = [
@@ -104,7 +117,7 @@ const navItems = [
         label: '测试',
         path: '',
         children: [
-            { id: '2-1', label: '测试1', path: '/test1' },
+            { id: '2-1', label: '小工具', path: '/SmallTools' },
             { id: '2-2', label: '测试2', path: '/test2' },
             { id: '2-3', label: '测试3', path: '/test3' }
         ]
@@ -197,11 +210,12 @@ const controllerRight = () => {
     }
 
     .mid {
+        width: 100%;
         flex: 1;
         height: calc(100% - 10px);
         min-width: 200px;
         transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        padding: 0 20px;
+        // padding: 0 20px;
         display: flex;
         align-items: stretch;
 

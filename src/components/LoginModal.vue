@@ -44,8 +44,8 @@ const themeColorStore = useThemeColorStore()
 
 // 计算样式 - 使用CSS变量
 const dialogStyle = computed(() => ({
-  '--color-green-default': themeColorStore.default1,
-  '--color-cyan-default': themeColorStore.default2
+    '--color-green-default': themeColorStore.default1,
+    '--color-cyan-default': themeColorStore.default2
 }))
 
 const dialogVisible = computed({
@@ -108,7 +108,7 @@ const handleSubmit = async () => {
     // 防止重复提交
     if (isSubmitting.value || loading.value) return
     isSubmitting.value = true
-    
+
     try {
         await formRef.value.validate((valid) => {
             if (valid) {

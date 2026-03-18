@@ -7,8 +7,7 @@
         <!-- 下面部分：width占满，分为3列2行，高度为1 -->
         <div class="bottom-section">
             <div class="bottom-section-item" v-for="i in [0, 1, 2, 3, 4, 5]" @click="handleClick(i)">
-                <ImageCard :prompt="images[i]!.prompt" title="" :imageUrl="images[i]!.imgurl"
-                    class="card" />
+                <ImageCard :prompt="images[i]!.prompt" title="" :imageUrl="images[i]!.imgurl" class="card" />
             </div>
         </div>
     </div>
@@ -54,8 +53,6 @@ const handleClick = (index: number) => {
         justify-content: center;
 
         margin-top: 3px;
-
-        // background-color: aqua;
     }
 
     .bottom-section {

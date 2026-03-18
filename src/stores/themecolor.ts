@@ -63,6 +63,22 @@ const greyDark = 'rgba(124, 124, 124, 1)';
 /* 深灰 */
 const greyDarkGrey = 'rgba(87, 87, 87, 1)';
 
+/* 半透明颜色 */
+const transparentWhite10 = 'rgba(255, 255, 255, 0.1)';
+const transparentWhite30 = 'rgba(255, 255, 255, 0.3)';
+const transparentWhite40 = 'rgba(255, 255, 255, 0.4)';
+const transparentBlack10 = 'rgba(0, 0, 0, 0.1)';
+const transparentBlack20 = 'rgba(0, 0, 0, 0.2)';
+const transparentBlack30 = 'rgba(0, 0, 0, 0.3)';
+
+/* 半透明彩色 */
+const transparentOrange50 = 'rgba(255, 165, 0, 0.5)';
+const transparentGrey50 = 'rgba(128, 128, 128, 0.5)';
+const transparentBlue50 = 'rgba(0, 128, 255, 0.5)';
+
+/* 其他颜色 */
+const redError = '#ff6b6b';
+
 export const useThemeColorStore = defineStore('themeColor', {
     state: () => ({
         scrollbarTrack: originScrollbarTrack,
@@ -81,5 +97,15 @@ export const useThemeColorStore = defineStore('themeColor', {
         defaultGrey2: cyanDefaultGrey,
         dark2: cyanDark,
         darkGrey2: cyanDarkGrey,
+        transparentWhite10: transparentWhite10,
+        transparentWhite30: transparentWhite30,
+        transparentWhite40: transparentWhite40,
+        transparentBlack10: transparentBlack10,
+        transparentBlack20: transparentBlack20,
+        transparentBlack30: transparentBlack30,
+        transparentOrange50: transparentOrange50,
+        transparentGrey50: transparentGrey50,
+        transparentBlue50: transparentBlue50,
+        redError: redError,
     }),
 })

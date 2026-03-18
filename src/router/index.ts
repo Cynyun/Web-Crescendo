@@ -34,9 +34,9 @@ const router = createRouter({
           component: () => import('../views/BaseSettings.vue'),
         },
         {
-          path: 'test1',
-          name: 'Test1',
-          component: () => import('../views/Test1.vue'),
+          path: 'SmallTools',
+          name: '小工具',
+          component: () => import('../views/SmallTools.vue'),
         },
         {
           path: 'test2',

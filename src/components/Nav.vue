@@ -14,13 +14,9 @@
 
             <!-- 未登录：显示注册（和/或登录）按钮 -->
             <div v-else class="auth-buttons">
-                <NewButton type="primary" size="small" @click="showRegister = true">注册</NewButton>
-                <NewButton size="small" @click="showLogin = true">登录</NewButton>
+                <NewButton type="primary" size="small" @click="emit('show-register')">注册</NewButton>
+                <NewButton size="small" @click="emit('show-login')">登录</NewButton>
             </div>
-            <!-- 注册弹窗 -->
-            <RegisterModal v-model:visible="showRegister" />
-            <!-- 登录弹窗 -->
-            <LoginModal v-model:visible="showLogin" />
         </div>
     </div>
 </template>
@@ -29,8 +25,6 @@
 import { ref, computed } from 'vue';
 import { useUserStore } from '@/stores/user';
 import { useThemeColorStore } from '@/stores/themecolor';
-import RegisterModal from './RegisterModal.vue';
-import LoginModal from './LoginModal.vue';
 import GradientText from './GradientText.vue';
 import NewButton from './Button.vue';
 import { ElMessage } from 'element-plus';
@@ -46,6 +40,8 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: 'update:isAlwaysHighlighted', value: boolean): void;
     (e: 'toggle-nav', isVisible: boolean): void;
+    (e: 'show-register'): void;
+    (e: 'show-login'): void;
 }>();
 
 // 是否开启常显高亮
@@ -90,12 +86,6 @@ const navStyle = computed(() => ({
     '--darkGrey1': themeColorStore.darkGrey1,
     '--darkGrey2': themeColorStore.darkGrey2
 }));
-
-// 显示注册组件
-const showRegister = ref(false);
-
-// 显示登入组件
-const showLogin = ref(false);
 
 // 退出登录
 const isLoggingOut = ref(false); // 防止重复点击
@@ -142,6 +132,8 @@ const handleLogout = () => {
     transform: translateY(0);
     opacity: 1;
     overflow: hidden;
+    // 不要设置nav的优先级高于或等于controllerNavShow
+    // z-index: 10;
 
     .controllerHighlight {
         width: 20px;
