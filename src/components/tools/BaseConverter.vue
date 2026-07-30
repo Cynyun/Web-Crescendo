@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
-import InputSelect from '../common/InputSelect.vue';
+import InputSelect from '../InputSelect.vue';
 import { ElTable, ElTableColumn } from 'element-plus';
 import { useThemeColorStore } from '../../stores/themecolor';
 

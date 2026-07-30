@@ -119,7 +119,7 @@ const navItems = [
         children: [
             { id: '2-1', label: '小工具', path: '/SmallTools' },
             { id: '2-2', label: '测试2', path: '/test2' },
-            { id: '2-3', label: '测试3', path: '/test3' }
+            { id: '2-3', label: '随机内容生成', path: '/RandomStr' }
         ]
     },
     {

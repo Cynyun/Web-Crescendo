@@ -6,11 +6,16 @@
                 @input="handleInput" :style="{
                     backgroundColor: colors.inputBackground,
                     borderColor: colors.borderColor,
-                    color: colors.textColor
+                    color: colors.textColor,
+                    '--focus-outline-color': colors.focusOutline,
+                    '--placeholder-color': colors.placeholderColor
                 }" />
-            <div class="input-select-arrow" :class="{ 'open': isDropdownOpen, 'up': isDropdownUp }" :style="{
+            <div class="input-select-arrow" :class="{ 'open': isDropdownOpen }" :style="{
                 color: colors.arrowColor
-            }">▼</div>
+            }">
+                <span class="arrow-icon arrow-down">▼</span>
+                <span class="arrow-icon arrow-up">▲</span>
+            </div>
         </div>
         <div v-show="isDropdownOpen" class="input-select-dropdown" :class="{ 'dropdown-up': isDropdownUp }" :style="{
             backgroundColor: colors.dropdownBackground,
@@ -57,13 +62,19 @@ const themeStore = useThemeColorStore();
 
 // 计算颜色值
 const colors = computed(() => ({
-    inputBackground: 'rgba(255, 255, 255, 0.1)',
+    // inputBackground: 'rgba(255, 255, 255, 0.1)',
+    inputBackground: themeStore.transparentWhite10,
     borderColor: themeStore.lightGrey2,
     textColor: themeStore.light1,
-    placeholderColor: 'rgba(255, 255, 255, 0.5)',
-    dropdownBackground: 'rgba(0, 0, 0, 0.8)',
-    optionHoverBackground: 'rgba(255, 255, 255, 0.1)',
-    arrowColor: themeStore.light1
+    // placeholderColor: 'rgba(255, 255, 255, 0.5)',
+    placeholderColor: themeStore.light1,
+    // dropdownBackground: 'rgba(0, 0, 0, 0.8)',
+    dropdownBackground: themeStore.transparentBlack80,
+    // optionHoverBackground: 'rgba(255, 255, 255, 0.1)',
+    optionHoverBackground: themeStore.transparentWhite10,
+    arrowColor: themeStore.light1,
+    // focusOutline: 'rgba(125, 255, 255, 0.5)',
+    focusOutline: themeStore.transparentCyan50,
 }));
 
 // 检测下拉菜单位置
@@ -149,8 +160,13 @@ const selectOption = (value: string | number) => {
             border-radius: 5px;
             cursor: pointer;
 
+            &:focus {
+                outline: 2px solid var(--focus-outline-color);
+                outline-offset: 1px;
+            }
+
             &::placeholder {
-                color: rgba(255, 255, 255, 0.5);
+                color: var(--placeholder-color);
             }
         }
 
@@ -161,6 +177,31 @@ const selectOption = (value: string | number) => {
             font-size: 10px;
             pointer-events: none;
             z-index: 2;
+
+            .arrow-icon {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                transition: opacity 0.25s ease;
+            }
+
+            .arrow-down {
+                opacity: 1;
+            }
+
+            .arrow-up {
+                opacity: 0;
+            }
+
+            &.open {
+                .arrow-down {
+                    opacity: 0;
+                }
+                .arrow-up {
+                    opacity: 1;
+                }
+            }
         }
     }
 
@@ -172,6 +213,7 @@ const selectOption = (value: string | number) => {
         max-height: 200px;
         overflow-y: auto;
         border: 1px solid;
+        box-sizing: border-box;
         border-radius: 0 0 5px 5px;
         z-index: 10;
         margin-top: 2px;
@@ -196,18 +238,6 @@ const selectOption = (value: string | number) => {
     /* 确保鼠标从输入框移动到下拉菜单时不会触发mouseleave */
     &:hover .input-select-dropdown {
         display: block;
-    }
-
-    .input-select-arrow {
-        transition: transform 0.2s ease;
-
-        &.open {
-            transform: rotate(180deg);
-        }
-
-        &.up {
-            transform: rotate(0deg);
-        }
     }
 
     .input-select-dropdown {

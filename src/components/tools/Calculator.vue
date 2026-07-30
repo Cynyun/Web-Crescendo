@@ -67,7 +67,7 @@
 
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
-import InputSelect from '../common/InputSelect.vue';
+import InputSelect from '../InputSelect.vue';
 import NewButton from '../Button.vue';
 import { useThemeColorStore } from '../../stores/themecolor';
 

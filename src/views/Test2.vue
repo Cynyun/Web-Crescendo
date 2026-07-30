@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import InputSelect from '../components/common/InputSelect.vue';
+import InputSelect from '../components/InputSelect.vue';
 
 // Test data
 const selectedValue1 = ref('option1');

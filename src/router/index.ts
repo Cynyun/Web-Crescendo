@@ -44,9 +44,9 @@ const router = createRouter({
           component: () => import('../views/Test2.vue'),
         },
         {
-          path: 'test3',
-          name: 'Test3',
-          component: () => import('../views/Test3.vue'),
+          path: 'RandomStr',
+          name: 'RandomStr',
+          component: () => import('../views/RandomStr.vue'),
         },
       ],
     },
